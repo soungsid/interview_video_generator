@@ -24,18 +24,24 @@ class AIClient:
         )
         logger.info(f"AIClient initialized with base_url: {self.base_url}, default_model: {self.default_model}")
     
-    def generate_completion(self, messages: List[dict], model: Optional[str] = None) -> str:
-        """Generate a completion using the AI model with conversation history"""
+    def generate_completion(self, messages: List[dict], model: Optional[str] = None, max_tokens: int = 4000) -> str:
+        """Generate a completion using the AI model with conversation history
+        
+        Args:
+            messages: Conversation history
+            model: AI model to use (optional)
+            max_tokens: Maximum tokens in response (default: 4000)
+        """
         try:
             model_to_use = model or self.default_model
-            logger.info(f"Generating completion with model: {model_to_use}")
+            logger.info(f"Generating completion with model: {model_to_use}, max_tokens: {max_tokens}")
             logger.debug(f"Messages: {messages}")
             
             response = self.client.chat.completions.create(
                 model=model_to_use,
                 messages=messages,
                 temperature=0.7,
-                max_tokens=2000
+                max_tokens=max_tokens
             )
             
             content = response.choices[0].message.content
