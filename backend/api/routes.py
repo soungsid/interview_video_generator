@@ -22,6 +22,22 @@ async def root():
     }
 
 
+@api_router.get("/health/database")
+async def check_database():
+    """Check MongoDB connection health"""
+    try:
+        video_service = await get_video_service()
+        # Try to ping the database
+        await video_service.db.command('ping')
+        return {
+            "status": "healthy",
+            "message": "MongoDB connection successful"
+        }
+    except Exception as e:
+        logger.error(f"Database health check failed: {str(e)}")
+        raise HTTPException(status_code=503, detail=f"Database connection failed: {str(e)}")
+
+
 @api_router.post("/videos/generate", response_model=VideoWithDialogues)
 async def generate_video(request: GenerateVideoRequest):
     """
