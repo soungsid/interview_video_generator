@@ -136,7 +136,7 @@ class AudioService:
     
     def get_audio_base_path(self) -> Path:
         """Get base path for audio files"""
-        return Path("/app/backend/audio_files")
+        return self.audio_base_path
     
     def get_video_audio_dir(self, video_id: str) -> Path:
         """Get audio directory for a specific video"""
