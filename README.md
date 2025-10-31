@@ -173,6 +173,12 @@ cd /app/backend
 pip install -r requirements.txt
 ```
 
+### Activate venv
+```bash
+cd /app/backend
+source venv/Scripts/activate
+```
+
 ### Run the API
 ```bash
 uvicorn server:app --host 0.0.0.0 --port 8001 --reload

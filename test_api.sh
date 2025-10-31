@@ -24,7 +24,7 @@ echo "Generating interview script for 'Python Decorators' with 3 questions..."
 RESPONSE=$(curl -s -X POST "$API_URL/videos/generate" \
   -H "Content-Type: application/json" \
   -d '{
-    "topic": "Python Decorators",
+    "topic": "Spring MVC",
     "num_questions": 3
   }')
 

@@ -22,6 +22,7 @@ def get_database() -> AsyncIOMotorDatabase:
         mongo_password = os.environ.get('MONGO_PASSWORD')
         mongo_cluster = os.environ.get('MONGO_CLUSTER')
         mongo_app_name = os.environ.get('MONGO_APP_NAME', 'Cluster0')
+        logger.info(f"mongo_username: {mongo_username}")
         
         # Support for MongoDB Atlas with SRV and ServerAPI
         try:
@@ -33,6 +34,8 @@ def get_database() -> AsyncIOMotorDatabase:
                 
                 mongo_url = f"mongodb+srv://{username_encoded}:{password_encoded}@{mongo_cluster}/?appName={mongo_app_name}"
                 
+                logger.info(f"mongo_url: {mongo_url}")
+
                 _client = AsyncIOMotorClient(
                     mongo_url,
                     server_api=ServerApi('1'),
