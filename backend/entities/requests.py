@@ -14,3 +14,9 @@ class GenerateVideoRequest(BaseModel):
         default=None, 
         description="AI model to use (optional, defaults to configured model)"
     )
+    max_tokens: Optional[int] = Field(
+        default=4000,
+        ge=500,
+        le=8000,
+        description="Maximum tokens per response (500-8000, default: 4000 for detailed answers)"
+    )
