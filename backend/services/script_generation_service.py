@@ -146,7 +146,7 @@ Important rules:
         
         return dialogues
     
-    def _generate_conclusion(self, topic: str, dialogues: List[dict], model: Optional[str] = None) -> str:
+    def _generate_conclusion(self, topic: str, dialogues: List[dict], model: Optional[str] = None, max_tokens: int = 4000) -> str:
         """Generate a conclusion that references the interview"""
         messages = [
             {
@@ -159,4 +159,4 @@ Important rules:
             }
         ]
         
-        return self.ai_client.generate_completion(messages, model)
+        return self.ai_client.generate_completion(messages, model, max_tokens)
