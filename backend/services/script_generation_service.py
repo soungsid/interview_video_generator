@@ -76,17 +76,30 @@ class ScriptGenerationService:
             "candidate_persona": candidate_persona
         }
     
-    def _generate_introduction(self, topic: str, model: Optional[str] = None, max_tokens: int = 4000) -> str:
+    def _generate_introduction(
+        self, 
+        topic: str, 
+        interviewer_persona: Persona, 
+        language: str,
+        model: Optional[str] = None, 
+        max_tokens: int = 4000
+    ) -> str:
         """Generate the introduction for the video"""
+        personality_desc = ", ".join(interviewer_persona.personality_traits)
+        
+        system_prompt = f"""You are {interviewer_persona.name}, a professional YouTuber who creates engaging interview content.
+Your specialty is {interviewer_persona.specialty or 'general topics'}.
+Your personality is: {personality_desc}.
+Speak in {language} language."""
+        
+        user_prompt = f"""Create a brief, engaging introduction (2-3 sentences) for a YouTube video where you'll interview a candidate about {topic}.
+Welcome viewers and introduce the topic naturally.
+Show your personality: {personality_desc}.
+Return ONLY the introduction text."""
+        
         messages = [
-            {
-                "role": "system",
-                "content": "You are a professional YouTuber who creates engaging technical interview content. Your style is friendly, clear, and professional."
-            },
-            {
-                "role": "user",
-                "content": f"Create a brief, engaging introduction (2-3 sentences) for a YouTube video where you'll interview a candidate about {topic}. Welcome viewers and introduce the topic naturally."
-            }
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
         ]
         
         return self.ai_client.generate_completion(messages, model, max_tokens)
