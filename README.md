@@ -10,6 +10,9 @@ A FastAPI-based REST API that generates simulated YouTube interview video script
 - **MongoDB Persistence**: Stores complete video scripts and dialogues
 - **RESTful API**: Clean endpoints for generation and retrieval
 - **Production-Ready**: Clean architecture with service layers, logging, and error handling
+- **FFmpeg Support**: Audio processing capabilities for future TTS integration
+- **Docker Support**: Fully containerized with Docker and Docker Compose
+- **Cross-Platform**: Works on Windows, Linux, and macOS
 
 ## Architecture
 
