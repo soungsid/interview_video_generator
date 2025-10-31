@@ -329,6 +329,9 @@ DEEPSEEK_API_KEY="sk-1234567890abcdef1234567890abcdef"
 DEEPSEEK_BASE_URL="https://api.deepseek.com/v1"
 DEFAULT_AI_MODEL="deepseek-chat"
 
+# Audio Files Configuration
+AUDIO_FILES_PATH="./audio_files"
+
 # AWS Polly (Optional)
 AWS_ACCESS_KEY_ID="AKIA1234567890EXAMPLE"
 AWS_SECRET_ACCESS_KEY="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
