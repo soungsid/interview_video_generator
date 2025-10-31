@@ -1,8 +1,10 @@
 import logging
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from clients.ai_client import AIClient
 from entities.dialogue import Role
+from entities.persona import Persona, Language
+from services.interjections import InterjectionService
 
 logger = logging.getLogger(__name__)
 
@@ -12,8 +14,18 @@ class ScriptGenerationService:
     
     def __init__(self, ai_client: AIClient):
         self.ai_client = ai_client
+        self.interjection_service = InterjectionService()
     
-    def generate_video_script(self, topic: str, num_questions: int, model: Optional[str] = None, max_tokens: int = 4000) -> dict:
+    def generate_video_script(
+        self, 
+        topic: str, 
+        num_questions: int, 
+        interviewer_persona: Persona,
+        candidate_persona: Persona,
+        language: Language = Language.ENGLISH,
+        model: Optional[str] = None, 
+        max_tokens: int = 4000
+    ) -> dict:
         """
         Generate a complete video script with introduction, dialogues, and conclusion.
         Maintains conversation memory throughout the generation process.
