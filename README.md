@@ -547,30 +547,45 @@ curl -X POST http://localhost:8001/api/videos/generate \
 ## Code Structure
 
 ```
-/app/backend/
-├── api/                      # API Layer (routes)
-│   ├── __init__.py
-│   └── routes.py            # REST endpoints
-├── clients/                  # External clients
-│   ├── __init__.py
-│   └── ai_client.py         # LLM client (DeepSeek, OpenAI, etc.)
-├── config/                   # Configuration
-│   ├── __init__.py
-│   ├── database.py          # MongoDB connection
-│   └── dependencies.py      # Dependency injection
-├── entities/                 # Data models (Pydantic)
-│   ├── __init__.py
-│   ├── dialogue.py          # Dialogue & Role models
-│   ├── requests.py          # Request DTOs
-│   └── video.py            # Video models
-├── services/                 # Business logic
-│   ├── __init__.py
-│   ├── script_generation_service.py  # Script generation
-│   └── video_service.py     # Video persistence
-├── server.py                # Application entry point
-├── .env                     # Environment configuration
-├── .env.example             # Environment template
-└── requirements.txt         # Python dependencies
+/app/
+├── backend/                      # Backend application
+│   ├── api/                      # API Layer (routes)
+│   │   ├── __init__.py
+│   │   └── routes.py            # REST endpoints
+│   ├── clients/                  # External clients
+│   │   ├── __init__.py
+│   │   └── ai_client.py         # LLM client (DeepSeek, OpenAI, etc.)
+│   ├── config/                   # Configuration
+│   │   ├── __init__.py
+│   │   ├── database.py          # MongoDB connection
+│   │   └── dependencies.py      # Dependency injection
+│   ├── entities/                 # Data models (Pydantic)
+│   │   ├── __init__.py
+│   │   ├── dialogue.py          # Dialogue & Role models
+│   │   ├── requests.py          # Request DTOs
+│   │   └── video.py            # Video models
+│   ├── services/                 # Business logic
+│   │   ├── __init__.py
+│   │   ├── script_generation_service.py  # Script generation
+│   │   └── video_service.py     # Video persistence
+│   ├── audio_files/             # Generated audio files
+│   ├── server.py                # Application entry point
+│   ├── Dockerfile               # Docker image definition
+│   ├── .dockerignore            # Docker ignore patterns
+│   ├── .env                     # Environment configuration
+│   └── requirements.txt         # Python dependencies
+├── .github/
+│   └── workflows/
+│       └── docker-build-push.yml # GitHub Actions CI/CD
+├── .vscode/                     # VS Code configuration
+│   ├── settings.json            # Editor settings
+│   ├── launch.json              # Debug configuration
+│   └── extensions.json          # Recommended extensions
+├── docker-compose.yml           # Docker Compose configuration
+├── setup-windows.bat            # Windows setup script
+├── setup-linux.sh               # Linux setup script
+├── setup-gitbash.sh             # Git Bash setup script
+└── README.md                    # This file
 ```
 
 **Architecture Pattern**: Layered architecture with dependency injection
