@@ -14,7 +14,10 @@ class Video(BaseModel):
     title: str
     topic: str
     introduction: str
+    introduction_audio_url: str = ""
     conclusion: str
+    conclusion_audio_url: str = ""
+    final_audio_url: str = ""  # URL to the concatenated full audio
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
@@ -24,6 +27,9 @@ class VideoWithDialogues(BaseModel):
     title: str
     topic: str
     introduction: str
+    introduction_audio_url: str = ""
     conclusion: str
+    conclusion_audio_url: str = ""
+    final_audio_url: str = ""
     created_at: datetime
     dialogues: List[DialogueResponse]

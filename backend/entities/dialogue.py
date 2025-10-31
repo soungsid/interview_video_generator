@@ -18,6 +18,7 @@ class Dialogue(BaseModel):
     text: str
     question_number: int
     video_id: str
+    audio_url: str = ""  # URL to the audio file
 
 
 class DialogueResponse(BaseModel):
@@ -26,3 +27,4 @@ class DialogueResponse(BaseModel):
     role: Role
     text: str
     question_number: int
+    audio_url: str = ""
