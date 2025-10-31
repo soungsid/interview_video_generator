@@ -18,6 +18,7 @@ services:
       - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
       - DEEPSEEK_BASE_URL=${DEEPSEEK_BASE_URL}
       - DEFAULT_AI_MODEL=${DEFAULT_AI_MODEL}
+      - AUDIO_FILES_PATH=${AUDIO_FILES_PATH:-/app/audio_files}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
@@ -25,7 +26,7 @@ services:
       - POLLY_VOICE_CANDIDATE=${POLLY_VOICE_CANDIDATE}
     volumes:
       - ./backend:/app
-      - ./backend/audio_files:/app/audio_files
+      - audio_data:/app/audio_files
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8001/api/')"]
@@ -33,6 +34,10 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
+volumes:
+  audio_data:
+    driver: local
 
 networks:
   default:
