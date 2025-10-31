@@ -20,8 +20,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Create directory for audio files
+# Create directory for audio files (default location)
 RUN mkdir -p /app/audio_files
+
+# Set default environment variable for audio files path
+ENV AUDIO_FILES_PATH=/app/audio_files
 
 # Expose port
 EXPOSE 8001
