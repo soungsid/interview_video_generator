@@ -206,11 +206,14 @@ backend:
     file: "/app/backend/api/routes.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Route generate_video modifiée pour sélection automatique personas basée sur topic et language"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Automatic persona selection working perfectly. Python topics select appropriate tech personas, Java topics select Java specialists, French marketing topics select French-speaking personas. Generated videos have proper structure with 7 dialogues (3 Q&A pairs + 1 reaction). Multilingual support confirmed with language-specific patterns detected."
   
   - task: "Intégrer persona_routes dans server.py"
     implemented: true
