@@ -33,27 +33,47 @@ class ScriptGenerationService:
         Args:
             topic: The interview topic
             num_questions: Number of questions to generate
+            interviewer_persona: The interviewer persona
+            candidate_persona: The candidate persona
+            language: Language for the interview
             model: AI model to use (optional)
             max_tokens: Maximum tokens per response (default: 4000)
+        
+        Returns:
+            Dictionary with introduction, dialogues, conclusion, and personas
         """
-        logger.info(f"Starting video script generation for topic: {topic}, questions: {num_questions}, max_tokens: {max_tokens}")
+        logger.info(f"Starting video script generation for topic: {topic}, questions: {num_questions}")
+        logger.info(f"Interviewer: {interviewer_persona.name} ({interviewer_persona.specialty})")
+        logger.info(f"Candidate: {candidate_persona.name}")
+        logger.info(f"Language: {language}, max_tokens: {max_tokens}")
+        
+        lang_code = language.value
         
         # Generate introduction
-        introduction = self._generate_introduction(topic, model, max_tokens)
+        introduction = self._generate_introduction(
+            topic, interviewer_persona, lang_code, model, max_tokens
+        )
         logger.info("Introduction generated")
         
         # Generate dialogues with conversation memory
-        dialogues = self._generate_dialogues(topic, num_questions, model, max_tokens)
+        dialogues = self._generate_dialogues(
+            topic, num_questions, interviewer_persona, candidate_persona, 
+            lang_code, model, max_tokens
+        )
         logger.info(f"Generated {len(dialogues)} dialogues")
         
         # Generate conclusion
-        conclusion = self._generate_conclusion(topic, dialogues, model, max_tokens)
+        conclusion = self._generate_conclusion(
+            topic, dialogues, interviewer_persona, lang_code, model, max_tokens
+        )
         logger.info("Conclusion generated")
         
         return {
             "introduction": introduction,
             "dialogues": dialogues,
-            "conclusion": conclusion
+            "conclusion": conclusion,
+            "interviewer_persona": interviewer_persona,
+            "candidate_persona": candidate_persona
         }
     
     def _generate_introduction(self, topic: str, model: Optional[str] = None, max_tokens: int = 4000) -> str:
