@@ -1,6 +1,8 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 
+from entities.persona import Language
+
 
 class GenerateVideoRequest(BaseModel):
     """Request to generate a video script"""
@@ -9,6 +11,10 @@ class GenerateVideoRequest(BaseModel):
         ge=1, 
         le=20, 
         description="Number of interview questions (1-20)"
+    )
+    language: Optional[Language] = Field(
+        default=Language.ENGLISH,
+        description="Language for the interview (en or fr)"
     )
     model: Optional[str] = Field(
         default=None, 
