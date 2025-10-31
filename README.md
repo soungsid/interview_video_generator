@@ -204,11 +204,19 @@ DEEPSEEK_API_KEY="your-api-key-here"
 DEEPSEEK_BASE_URL="https://api.deepseek.com/v1"
 DEFAULT_AI_MODEL="deepseek-chat"
 
+# Audio Files Configuration
+AUDIO_FILES_PATH="./audio_files"
+
 # AWS Polly Configuration (optional)
 AWS_ACCESS_KEY_ID="your_aws_access_key_id"
 AWS_SECRET_ACCESS_KEY="your_aws_secret_access_key"
 AWS_DEFAULT_REGION="us-east-1"
 ```
+
+> 📝 **Note:** `AUDIO_FILES_PATH` specifies where generated audio files will be stored. 
+> - Default: `./audio_files` (created in current directory)
+> - Can be relative (`./audio`) or absolute (`/path/to/audio`)
+> - See [AUDIO_CONFIGURATION.md](AUDIO_CONFIGURATION.md) for details
 
 3. **Build and run with Docker Compose**
 ```bash
