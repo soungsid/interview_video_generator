@@ -20,6 +20,14 @@ class AudioService:
         self.voice_interviewer = os.environ.get('POLLY_VOICE_INTERVIEWER', 'Matthew')
         self.voice_candidate = os.environ.get('POLLY_VOICE_CANDIDATE', 'Joanna')
         
+        # Configure audio files directory
+        audio_path = os.environ.get('AUDIO_FILES_PATH', './audio_files')
+        self.audio_base_path = Path(audio_path).resolve()
+        
+        # Create directory if it doesn't exist
+        self.audio_base_path.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Audio files directory: {self.audio_base_path}")
+        
         if not self.aws_access_key or not self.aws_secret_key:
             logger.warning("AWS credentials not configured - audio generation will be disabled")
             self.client = None
