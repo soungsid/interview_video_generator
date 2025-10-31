@@ -1,17 +1,29 @@
 import logging
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import FileResponse
 from typing import List
 from pathlib import Path
 
 from entities.video import Video, VideoWithDialogues
 from entities.requests import GenerateVideoRequest
-from config.dependencies import get_script_service, get_video_service
+from entities.persona import Language
+from config.dependencies import get_script_service, get_video_service, get_database, get_ai_client
+from services.persona_service import PersonaService
+from motor.motor_asyncio import AsyncIOMotorDatabase
+from clients.ai_client import AIClient
 
 logger = logging.getLogger(__name__)
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
+
+
+def get_persona_service(
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    ai_client: AIClient = Depends(get_ai_client)
+) -> PersonaService:
+    """Dependency to get PersonaService instance"""
+    return PersonaService(db, ai_client)
 
 
 @api_router.get("/")
