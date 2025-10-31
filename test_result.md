@@ -179,11 +179,14 @@ backend:
     file: "/app/backend/services/script_generation_service.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Service modifié pour accepter personas, générer interjections naturelles, et dialogues plus humains"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Script generation with personas and interjections working excellently. Natural interjections found in 67-100% of candidate responses. Interviewer reactions working (40% frequency as designed). Dialogue quality excellent with detailed answers (100+ chars) and meaningful questions. Conversation memory maintained throughout."
   
   - task: "Modifier GenerateVideoRequest pour inclure language"
     implemented: true
