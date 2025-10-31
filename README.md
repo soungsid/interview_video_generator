@@ -2,6 +2,20 @@
 
 A FastAPI-based REST API that generates simulated YouTube interview video scripts using AI. The system creates realistic technical interview conversations with conversation memory, where a YouTuber interviewer asks questions and a candidate provides answers.
 
+---
+
+## 🚀 Quick Start
+
+**New here?** See [QUICKSTART.md](QUICKSTART.md) for the fastest way to get started!
+
+**TL;DR with Docker:**
+```bash
+docker-compose up -d
+# Open http://localhost:8001/docs
+```
+
+---
+
 ## Features
 
 - **AI-Powered Script Generation**: Uses DeepSeek (or other OpenAI-compatible models) to generate engaging interview content
