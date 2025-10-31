@@ -44,7 +44,7 @@ class ScriptGenerationService:
             "conclusion": conclusion
         }
     
-    def _generate_introduction(self, topic: str, model: Optional[str] = None) -> str:
+    def _generate_introduction(self, topic: str, model: Optional[str] = None, max_tokens: int = 4000) -> str:
         """Generate the introduction for the video"""
         messages = [
             {
@@ -57,7 +57,7 @@ class ScriptGenerationService:
             }
         ]
         
-        return self.ai_client.generate_completion(messages, model)
+        return self.ai_client.generate_completion(messages, model, max_tokens)
     
     def _generate_dialogues(self, topic: str, num_questions: int, model: Optional[str] = None) -> List[dict]:
         """
