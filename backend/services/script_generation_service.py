@@ -59,7 +59,7 @@ class ScriptGenerationService:
         
         return self.ai_client.generate_completion(messages, model, max_tokens)
     
-    def _generate_dialogues(self, topic: str, num_questions: int, model: Optional[str] = None) -> List[dict]:
+    def _generate_dialogues(self, topic: str, num_questions: int, model: Optional[str] = None, max_tokens: int = 4000) -> List[dict]:
         """
         Generate interview dialogues with conversation memory.
         Both agents remember the entire conversation.
@@ -74,15 +74,16 @@ class ScriptGenerationService:
 
 You will alternate between two personas:
 1. YOUTUBER: A friendly interviewer who asks progressively challenging questions
-2. CANDIDATE: A knowledgeable professional answering the questions
+2. CANDIDATE: A knowledgeable professional answering the questions with detailed, comprehensive explanations
 
 Important rules:
 - Maintain conversation memory: reference previous questions/answers when relevant
 - Make questions progressively more difficult
-- Keep responses clear and concise (2-4 sentences)
+- CANDIDATE should provide detailed, thorough explanations (4-6 sentences minimum)
 - Make it feel like a natural conversation, not isolated Q&A
 - The candidate should acknowledge and build upon previous topics when appropriate
-- The YouTuber may follow up based on previous answers"""
+- The YouTuber may follow up based on previous answers
+- Include practical examples and code snippets when relevant"""
             }
         ]
         
@@ -97,7 +98,7 @@ Important rules:
                 "content": f"As the YOUTUBER, ask question #{i} about {topic}. {'This is the first question.' if i == 1 else 'Build on the previous conversation.'} Return ONLY the question text, no labels or formatting."
             })
             
-            question_text = self.ai_client.generate_completion(conversation_history, model)
+            question_text = self.ai_client.generate_completion(conversation_history, model, max_tokens)
             
             # Log the question
             logger.info(f"\n[Question {i}] YOUTUBER: {question_text}")
@@ -118,10 +119,10 @@ Important rules:
             # Generate Candidate's answer
             conversation_history.append({
                 "role": "user",
-                "content": f"As the CANDIDATE, answer the question. Reference previous discussion if relevant. Keep it concise but informative (2-4 sentences). Return ONLY the answer text, no labels or formatting."
+                "content": f"As the CANDIDATE, provide a detailed, comprehensive answer to the question. Reference previous discussion if relevant. Give a thorough explanation with practical examples (4-6 sentences minimum). Return ONLY the answer text, no labels or formatting."
             })
             
-            answer_text = self.ai_client.generate_completion(conversation_history, model)
+            answer_text = self.ai_client.generate_completion(conversation_history, model, max_tokens)
             
             # Log the answer
             logger.info(f"[Answer {i}] CANDIDATE: {answer_text}")
