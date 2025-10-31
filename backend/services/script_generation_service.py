@@ -13,23 +13,29 @@ class ScriptGenerationService:
     def __init__(self, ai_client: AIClient):
         self.ai_client = ai_client
     
-    def generate_video_script(self, topic: str, num_questions: int, model: Optional[str] = None) -> dict:
+    def generate_video_script(self, topic: str, num_questions: int, model: Optional[str] = None, max_tokens: int = 4000) -> dict:
         """
         Generate a complete video script with introduction, dialogues, and conclusion.
         Maintains conversation memory throughout the generation process.
+        
+        Args:
+            topic: The interview topic
+            num_questions: Number of questions to generate
+            model: AI model to use (optional)
+            max_tokens: Maximum tokens per response (default: 4000)
         """
-        logger.info(f"Starting video script generation for topic: {topic}, questions: {num_questions}")
+        logger.info(f"Starting video script generation for topic: {topic}, questions: {num_questions}, max_tokens: {max_tokens}")
         
         # Generate introduction
-        introduction = self._generate_introduction(topic, model)
+        introduction = self._generate_introduction(topic, model, max_tokens)
         logger.info("Introduction generated")
         
         # Generate dialogues with conversation memory
-        dialogues = self._generate_dialogues(topic, num_questions, model)
+        dialogues = self._generate_dialogues(topic, num_questions, model, max_tokens)
         logger.info(f"Generated {len(dialogues)} dialogues")
         
         # Generate conclusion
-        conclusion = self._generate_conclusion(topic, dialogues, model)
+        conclusion = self._generate_conclusion(topic, dialogues, model, max_tokens)
         logger.info("Conclusion generated")
         
         return {
