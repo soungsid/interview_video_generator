@@ -16,6 +16,8 @@ node_modules/
 !.yarn/releases
 !.yarn/versions
 
+
+
 # Testing
 /coverage
 
@@ -73,6 +75,8 @@ agenthub/agents/youtube/db
 *.pack
 *.deb
 *.dylib
+
+**/.env
 
 # Build caches
 .cache/
