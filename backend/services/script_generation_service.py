@@ -259,17 +259,31 @@ Return ONLY the answer text, no labels or formatting."""
         
         return dialogues
     
-    def _generate_conclusion(self, topic: str, dialogues: List[dict], model: Optional[str] = None, max_tokens: int = 4000) -> str:
+    def _generate_conclusion(
+        self, 
+        topic: str, 
+        dialogues: List[dict], 
+        interviewer_persona: Persona,
+        language: str,
+        model: Optional[str] = None, 
+        max_tokens: int = 4000
+    ) -> str:
         """Generate a conclusion that references the interview"""
+        personality_desc = ", ".join(interviewer_persona.personality_traits)
+        
+        system_prompt = f"""You are {interviewer_persona.name}, concluding your YouTube interview video.
+Your personality is: {personality_desc}.
+Speak in {language} language."""
+        
+        user_prompt = f"""Create a brief, engaging conclusion (2-3 sentences) for your YouTube video about {topic}.
+Thank viewers, encourage engagement (likes, subscribes), and tease future content.
+Show your personality: {personality_desc}.
+Keep it friendly and natural.
+Return ONLY the conclusion text."""
+        
         messages = [
-            {
-                "role": "system",
-                "content": "You are a professional YouTuber concluding a technical interview video."
-            },
-            {
-                "role": "user",
-                "content": f"Create a brief, engaging conclusion (2-3 sentences) for a YouTube video about {topic}. Thank viewers, encourage engagement (likes, subscribes), and tease future content. Keep it friendly and professional."
-            }
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
         ]
         
         return self.ai_client.generate_completion(messages, model, max_tokens)
