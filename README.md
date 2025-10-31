@@ -618,17 +618,90 @@ All errors include detailed messages for debugging.
 
 ## Production Considerations
 
-- **API Key Security**: Store API keys in environment variables, never in code
+### Docker in Production
+
+When deploying the Docker container in production:
+
+1. **Use specific version tags** instead of `latest`
+```bash
+docker pull ghcr.io/<your-username>/interview-video-generator:v1.0.0
+```
+
+2. **Use Docker secrets for sensitive data**
+```bash
+docker secret create deepseek_api_key /path/to/key/file
+```
+
+3. **Enable health checks** (already configured in Dockerfile)
+
+4. **Use volume mounts for persistent data**
+```bash
+docker run -v /host/audio:/app/audio_files ...
+```
+
+5. **Configure resource limits**
+```bash
+docker run --memory="2g" --cpus="2" ...
+```
+
+### General Best Practices
+
+- **API Key Security**: Store API keys in environment variables or secrets manager, never in code
 - **Rate Limiting**: Consider adding rate limiting for the generation endpoint
 - **Caching**: Cache generated scripts if regenerating the same topic
 - **Monitoring**: Use logging to track API usage and AI token consumption
 - **Database Indexing**: Add indexes on video_id and created_at for faster queries
+- **FFmpeg**: Ensure ffmpeg is available (included in Docker image)
+
+## Troubleshooting
+
+### FFmpeg Issues
+
+**Docker:** FFmpeg is pre-installed in the Docker image, no action needed.
+
+**Windows:** If ffmpeg command not found:
+1. Verify installation: `ffmpeg -version`
+2. Check PATH includes ffmpeg bin directory
+3. Restart terminal/VS Code after PATH changes
+
+**Linux/macOS:** Install via package manager (see setup scripts)
+
+### VS Code Virtual Environment Not Activating
+
+1. Reload VS Code window: `Ctrl+Shift+P` → "Developer: Reload Window"
+2. Check `.vscode/settings.json` exists
+3. Verify `python.defaultInterpreterPath` points to venv
+
+### Docker Build Issues
+
+**Error: "Cannot connect to MongoDB"**
+- Ensure `.env` file has correct MongoDB credentials
+- Check MongoDB Atlas allows connections from your IP
+
+**Error: "Permission denied"**
+- On Linux, add user to docker group: `sudo usermod -aG docker $USER`
+- Logout and login again
+
+### GitHub Container Registry
+
+**Error: "unauthorized: authentication required"**
+```bash
+# Create personal access token with packages:read and packages:write
+echo $GITHUB_TOKEN | docker login ghcr.io -u <username> --password-stdin
+```
 
 ## Documentation
 
 Interactive API documentation is available at:
 - Swagger UI: `http://localhost:8001/docs`
 - ReDoc: `http://localhost:8001/redoc`
+
+## Support
+
+For issues and questions:
+1. Check the troubleshooting section above
+2. Review the [ARCHITECTURE.md](/app/ARCHITECTURE.md) for detailed design
+3. Check GitHub Issues
 
 ## License
 
