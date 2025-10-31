@@ -53,25 +53,52 @@ async def check_database():
 
 
 @api_router.post("/videos/generate", response_model=VideoWithDialogues)
-async def generate_video(request: GenerateVideoRequest):
+async def generate_video(
+    request: GenerateVideoRequest,
+    persona_service: PersonaService = Depends(get_persona_service)
+):
     """
     Generate a complete interview video script with introduction, dialogues, and conclusion.
+    Automatically selects appropriate personas based on the topic and language.
     
     - **topic**: The subject of the interview (e.g., "Spring Boot Security", "Microservices")
     - **num_questions**: Number of interview questions (1-20)
+    - **language**: Language for the interview (en or fr, default: en)
     - **model**: Optional AI model to use (defaults to configured model)
     - **max_tokens**: Maximum tokens per response (500-8000, default: 4000 for more detailed answers)
     """
     try:
-        logger.info(f"Received request to generate video: topic={request.topic}, num_questions={request.num_questions}, model={request.model}, max_tokens={request.max_tokens}")
+        logger.info(f"Received request to generate video: topic={request.topic}, num_questions={request.num_questions}, language={request.language}, model={request.model}, max_tokens={request.max_tokens}")
         
         script_service = get_script_service()
         video_service = await get_video_service()
         
-        # Generate script with conversation memory
+        # Select appropriate personas based on topic and language
+        try:
+            interviewer_persona, candidate_persona = await persona_service.select_personas_for_topic(
+                topic=request.topic,
+                language=request.language,
+                model=request.model
+            )
+            logger.info(f"Selected personas: Interviewer={interviewer_persona.name}, Candidate={candidate_persona.name}")
+        except ValueError as e:
+            # If no personas available, initialize defaults first
+            logger.warning(f"Persona selection failed: {e}. Initializing default personas...")
+            await persona_service.initialize_default_personas()
+            # Try again
+            interviewer_persona, candidate_persona = await persona_service.select_personas_for_topic(
+                topic=request.topic,
+                language=request.language,
+                model=request.model
+            )
+        
+        # Generate script with conversation memory and personas
         script_data = script_service.generate_video_script(
             topic=request.topic,
             num_questions=request.num_questions,
+            interviewer_persona=interviewer_persona,
+            candidate_persona=candidate_persona,
+            language=request.language,
             model=request.model,
             max_tokens=request.max_tokens
         )
