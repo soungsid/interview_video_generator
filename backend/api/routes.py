@@ -46,9 +46,10 @@ async def generate_video(request: GenerateVideoRequest):
     - **topic**: The subject of the interview (e.g., "Spring Boot Security", "Microservices")
     - **num_questions**: Number of interview questions (1-20)
     - **model**: Optional AI model to use (defaults to configured model)
+    - **max_tokens**: Maximum tokens per response (500-8000, default: 4000 for more detailed answers)
     """
     try:
-        logger.info(f"Received request to generate video: topic={request.topic}, num_questions={request.num_questions}, model={request.model}")
+        logger.info(f"Received request to generate video: topic={request.topic}, num_questions={request.num_questions}, model={request.model}, max_tokens={request.max_tokens}")
         
         script_service = get_script_service()
         video_service = await get_video_service()
@@ -57,7 +58,8 @@ async def generate_video(request: GenerateVideoRequest):
         script_data = script_service.generate_video_script(
             topic=request.topic,
             num_questions=request.num_questions,
-            model=request.model
+            model=request.model,
+            max_tokens=request.max_tokens
         )
         
         # Save to database
