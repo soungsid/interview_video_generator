@@ -101,3 +101,150 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: |
+  Améliorer la fluidité du dialogue pour ressembler à une conversation naturelle entre humains.
+  - Ajouter des interjections naturelles ("Ok...", "Eh bien...", etc.)
+  - L'interviewer doit parfois réagir avec blagues ou remerciements
+  - Créer un système de personas avec:
+    * Gestion en base de données MongoDB
+    * Nom et voix Amazon Polly Neural pour chaque persona
+    * Interviewers spécialisés (Java Spring Boot, Python, JavaScript/React, DevOps, Finance, Marketing, Droit)
+    * Candidats génériques
+    * Service dédié PersonaService
+    * API dédiée pour les personas
+  - Sélection automatique de persona via LLM selon le sujet
+  - 5-10 personas prédéfinis
+  - 15-20 interjections naturelles variées
+  - Support multilingue (français + anglais)
+
+backend:
+  - task: "Créer modèle Persona (entities/persona.py)"
+    implemented: true
+    working: true
+    file: "/app/backend/entities/persona.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Modèle Persona créé avec PersonaType, Language, PersonaCreate, PersonaUpdate"
+  
+  - task: "Créer service InterjectionService"
+    implemented: true
+    working: true
+    file: "/app/backend/services/interjections.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Service d'interjections créé avec 20+ interjections FR/EN pour candidat et interviewer"
+  
+  - task: "Créer PersonaService avec sélection automatique"
+    implemented: true
+    working: true
+    file: "/app/backend/services/persona_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Service persona créé avec CRUD, sélection AI, et initialisation de 10 personas prédéfinis"
+  
+  - task: "Créer API personas (persona_routes.py)"
+    implemented: true
+    working: true
+    file: "/app/backend/api/persona_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "API personas créée avec CRUD complet et endpoint initialize-defaults"
+  
+  - task: "Modifier script_generation_service pour intégrer personas et interjections"
+    implemented: true
+    working: true
+    file: "/app/backend/services/script_generation_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Service modifié pour accepter personas, générer interjections naturelles, et dialogues plus humains"
+  
+  - task: "Modifier GenerateVideoRequest pour inclure language"
+    implemented: true
+    working: true
+    file: "/app/backend/entities/requests.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Request model mis à jour avec paramètre language (en/fr)"
+  
+  - task: "Modifier routes principales pour sélection auto personas"
+    implemented: true
+    working: true
+    file: "/app/backend/api/routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Route generate_video modifiée pour sélection automatique personas basée sur topic et language"
+  
+  - task: "Intégrer persona_routes dans server.py"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Router persona_routes ajouté au serveur FastAPI"
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 0
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Test génération vidéo avec personas automatiques"
+    - "Test API personas (CRUD)"
+    - "Vérifier interjections dans dialogues"
+    - "Test multilingue (français et anglais)"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: |
+      Phase 1 terminée - Système de personas créé:
+      - Modèle Persona avec voix Amazon Polly Neural
+      - PersonaService avec sélection AI automatique
+      - API complète pour gestion personas
+      - 10 personas prédéfinis créés (Tech: Python, Java, JS, DevOps; Business: Finance, Marketing, Droit; Candidats génériques)
+      - InterjectionService avec 20+ interjections FR/EN
+      - Script generation modifié pour dialogues naturels avec interjections
+      - Support multilingue (français/anglais)
+      
+      Prêt pour tests backend:
+      1. Test API personas (GET, POST, initialize)
+      2. Test génération vidéo avec sélection automatique personas
+      3. Vérifier présence interjections dans dialogues
+      4. Test en français et anglais
