@@ -164,11 +164,14 @@ backend:
     file: "/app/backend/api/persona_routes.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "API personas créée avec CRUD complet et endpoint initialize-defaults"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: All persona API endpoints working correctly. GET /api/personas returns 10 personas, GET /api/personas/type/INTERVIEWER returns 7 interviewers, GET /api/personas/type/CANDIDATE returns 3 candidates. All personas have valid data structure with required fields."
   
   - task: "Modifier script_generation_service pour intégrer personas et interjections"
     implemented: true
