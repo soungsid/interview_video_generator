@@ -151,16 +151,37 @@ Returns API status.
 
 ## Installation & Setup
 
+You can run this application in three ways:
+1. **🐳 Docker** (Recommended - Cross-platform, includes ffmpeg)
+2. **💻 Local Development** (Windows with VS Code)
+3. **🐧 Native Installation** (Linux/macOS)
+
+---
+
+## 🐳 Docker Installation (Recommended)
+
 ### Prerequisites
-- Python 3.11+
-- MongoDB
-- DeepSeek API key (or other OpenAI-compatible API)
+- Docker and Docker Compose installed
+- MongoDB Atlas account (or local MongoDB)
+- DeepSeek API key
 
-### Environment Variables
+### Quick Start with Docker
 
-Create `/app/backend/.env`:
+1. **Clone the repository**
 ```bash
-MONGO_URL="mongodb://localhost:27017"
+git clone <your-repo-url>
+cd interview-video-generator
+```
+
+2. **Configure environment variables**
+
+Copy the `.env` file in the backend folder and update with your credentials:
+```bash
+# MongoDB Atlas Configuration
+MONGO_USERNAME="your_username"
+MONGO_PASSWORD="your_password"
+MONGO_CLUSTER="cluster0.xxxxx.mongodb.net"
+MONGO_APP_NAME="Cluster0"
 DB_NAME="interview_video_generator"
 CORS_ORIGINS="*"
 
@@ -168,23 +189,244 @@ CORS_ORIGINS="*"
 DEEPSEEK_API_KEY="your-api-key-here"
 DEEPSEEK_BASE_URL="https://api.deepseek.com/v1"
 DEFAULT_AI_MODEL="deepseek-chat"
+
+# AWS Polly Configuration (optional)
+AWS_ACCESS_KEY_ID="your_aws_access_key_id"
+AWS_SECRET_ACCESS_KEY="your_aws_secret_access_key"
+AWS_DEFAULT_REGION="us-east-1"
 ```
 
-### Install Dependencies
+3. **Build and run with Docker Compose**
 ```bash
-cd /app/backend
-pip install -r requirements.txt
+docker-compose up -d
 ```
 
-### Activate venv
+The API will be available at `http://localhost:8001`
+
+4. **View logs**
 ```bash
-cd /app/backend
+docker-compose logs -f backend
+```
+
+5. **Stop the application**
+```bash
+docker-compose down
+```
+
+### Using Pre-built Docker Image from GitHub Registry
+
+1. **Pull the image**
+```bash
+docker pull ghcr.io/<your-github-username>/interview-video-generator:latest
+```
+
+2. **Run the container**
+```bash
+docker run -d \
+  --name interview-video-generator \
+  -p 8001:8001 \
+  --env-file backend/.env \
+  -v $(pwd)/backend/audio_files:/app/audio_files \
+  ghcr.io/<your-github-username>/interview-video-generator:latest
+```
+
+### Building and Pushing Your Own Docker Image
+
+1. **Build the image**
+```bash
+cd backend
+docker build -t interview-video-generator:latest .
+```
+
+2. **Tag for GitHub Container Registry**
+```bash
+docker tag interview-video-generator:latest ghcr.io/<your-github-username>/interview-video-generator:latest
+```
+
+3. **Login to GitHub Container Registry**
+```bash
+echo $GITHUB_TOKEN | docker login ghcr.io -u <your-github-username> --password-stdin
+```
+
+4. **Push to registry**
+```bash
+docker push ghcr.io/<your-github-username>/interview-video-generator:latest
+```
+
+### Automated Build with GitHub Actions
+
+The repository includes a GitHub Actions workflow that automatically builds and pushes the Docker image when you push to `main` branch or create a tag.
+
+The workflow file is located at `.github/workflows/docker-build-push.yml`
+
+**To trigger automatic build:**
+```bash
+git push origin main
+# or create a version tag
+git tag -a v1.0.0 -m "Release v1.0.0"
+git push origin v1.0.0
+```
+
+---
+
+## 💻 Local Development Setup (Windows with VS Code)
+
+### Prerequisites
+- Python 3.11+
+- Visual Studio Code
+- MongoDB Atlas account or local MongoDB
+- DeepSeek API key
+
+### Automated Setup
+
+#### For Windows (CMD):
+```cmd
+setup-windows.bat
+```
+
+#### For Git Bash:
+```bash
+./setup-gitbash.sh
+```
+
+### Manual Setup
+
+1. **Install FFmpeg on Windows**
+
+**Option 1: Using Chocolatey (Recommended)**
+```cmd
+choco install ffmpeg
+```
+
+**Option 2: Using winget**
+```cmd
+winget install Gyan.FFmpeg
+```
+
+**Option 3: Manual Installation**
+- Download from: https://github.com/BtbN/FFmpeg-Builds/releases
+- Extract to `C:\ffmpeg`
+- Add `C:\ffmpeg\bin` to your system PATH
+
+2. **Create virtual environment**
+```cmd
+cd backend
+python -m venv venv
+```
+
+3. **Activate virtual environment**
+
+**CMD:**
+```cmd
+venv\Scripts\activate.bat
+```
+
+**Git Bash:**
+```bash
 source venv/Scripts/activate
 ```
 
-### Run the API
+**PowerShell:**
+```powershell
+venv\Scripts\Activate.ps1
+```
+
+4. **Install Python dependencies**
+```cmd
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+5. **Configure environment variables**
+
+Create `backend/.env` with your credentials (see Docker section for format)
+
+6. **Run the API**
+```cmd
+uvicorn server:app --reload --host 0.0.0.0 --port 8001
+```
+
+### VS Code Integration
+
+The repository includes VS Code configuration that automatically:
+- Activates the virtual environment when opening a terminal
+- Configures Python interpreter
+- Sets up debugging for FastAPI
+- Provides recommended extensions
+
+**Recommended Extensions** (will be suggested automatically):
+- Python
+- Pylance
+- Black Formatter
+- Flake8
+- Docker
+- YAML
+
+**To debug in VS Code:**
+1. Open the project folder in VS Code
+2. Press `F5` or go to Run → Start Debugging
+3. Select "Python: FastAPI" configuration
+
+---
+
+## 🐧 Native Installation (Linux/macOS)
+
+### Automated Setup
+
 ```bash
-uvicorn server:app --host 0.0.0.0 --port 8001 --reload
+chmod +x setup-linux.sh
+./setup-linux.sh
+```
+
+### Manual Setup
+
+1. **Install FFmpeg**
+
+**Ubuntu/Debian:**
+```bash
+sudo apt-get update
+sudo apt-get install ffmpeg
+```
+
+**Fedora/RHEL:**
+```bash
+sudo dnf install ffmpeg
+```
+
+**Arch Linux:**
+```bash
+sudo pacman -S ffmpeg
+```
+
+**macOS (using Homebrew):**
+```bash
+brew install ffmpeg
+```
+
+2. **Create virtual environment**
+```bash
+cd backend
+python3 -m venv venv
+```
+
+3. **Activate virtual environment**
+```bash
+source venv/bin/activate
+```
+
+4. **Install dependencies**
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+5. **Configure environment**
+
+Create `backend/.env` with your credentials
+
+6. **Run the API**
+```bash
+uvicorn server:app --reload --host 0.0.0.0 --port 8001
 ```
 
 The API will be available at `http://localhost:8001`
