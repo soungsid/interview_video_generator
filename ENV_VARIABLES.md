@@ -66,6 +66,42 @@ DEFAULT_AI_MODEL="deepseek-chat"
 
 ## Optional Variables
 
+### Audio Files Path
+
+Configure where generated audio files are stored:
+
+```bash
+AUDIO_FILES_PATH="./audio_files"
+```
+
+**Options:**
+- `"./audio_files"` - Relative path (default, created in current working directory)
+- `"/path/to/audio"` - Absolute path
+- `"C:\\audio"` - Windows absolute path
+- `/app/audio_files` - Docker default path
+
+**Examples:**
+
+Local development (relative path):
+```bash
+AUDIO_FILES_PATH="./audio_files"
+```
+
+Production (absolute path):
+```bash
+AUDIO_FILES_PATH="/var/app/audio_files"
+```
+
+Windows:
+```bash
+AUDIO_FILES_PATH="C:\\projects\\interview-gen\\audio_files"
+```
+
+**Notes:**
+- Directory will be created automatically if it doesn't exist
+- Ensure write permissions for the application
+- In Docker, consider using volumes for persistent storage
+
 ### AWS Polly (Text-to-Speech)
 
 Only needed if you plan to use AWS Polly for audio generation:
