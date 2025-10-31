@@ -149,11 +149,14 @@ backend:
     file: "/app/backend/services/persona_service.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Service persona créé avec CRUD, sélection AI, et initialisation de 10 personas prédéfinis"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: PersonaService working perfectly. All 10 personas initialized correctly with proper specialties (Python, Java Spring Boot, JavaScript React, DevOps, Finance, Marketing, Droit). AI-based persona selection working for different topics. CRUD operations functional."
   
   - task: "Créer API personas (persona_routes.py)"
     implemented: true
