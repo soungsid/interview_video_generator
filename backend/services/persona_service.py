@@ -14,10 +14,10 @@ logger = logging.getLogger(__name__)
 class PersonaService:
     """Service for managing personas (interviewers and candidates)"""
     
-    def __init__(self, db: AsyncIOMotorDatabase, ai_client: Optional[AIClient] = None):
+    def __init__(self, db: AsyncIOMotorDatabase, ai_provider: Optional[BaseAIProvider] = None):
         self.db = db
         self.personas_collection = db["personas"]
-        self.ai_client = ai_client
+        self.ai_provider = ai_provider
     
     async def create_persona(self, persona_data: PersonaCreate) -> Persona:
         """Create a new persona"""
