@@ -88,7 +88,7 @@ async def generate_audio(
             audio_files.append(audio_path)
         
         # Generate audio for conclusion
-        conclusion_path = audio_dir / f"99_conclusion.mp3"
+        conclusion_path = audio_dir / "99_conclusion.mp3"
         if audio_service.generate_audio(video.conclusion, conclusion_path, "interviewer"):
             stats["generated"] += 1
         elif conclusion_path.exists():
