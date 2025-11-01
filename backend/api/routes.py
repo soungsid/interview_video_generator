@@ -76,6 +76,8 @@ async def generate_video(
         
         script_service = get_script_service()
         video_service = await get_video_service()
+        seo_service = get_seo_service()
+        db = get_database()
         
         # Select appropriate personas based on topic and language
         try:
@@ -96,6 +98,15 @@ async def generate_video(
                 model=request.model
             )
         
+        # Generate SEO-friendly title
+        seo_title = seo_service.generate_seo_title(
+            topic=request.topic,
+            language=request.language,
+            num_questions=request.num_questions,
+            model=request.model
+        )
+        logger.info(f"Generated SEO title: {seo_title}")
+        
         # Generate script with conversation memory and personas
         script_data = script_service.generate_video_script(
             topic=request.topic,
@@ -107,8 +118,30 @@ async def generate_video(
             max_tokens=request.max_tokens
         )
         
-        # Save to database
-        video = await video_service.create_video(request.topic, script_data)
+        # Use SEO title instead of plain topic
+        script_data['seo_title'] = seo_title
+        
+        # Save video to database with SEO title and additional fields
+        video = await video_service.create_video(
+            topic=request.topic,
+            script_data=script_data,
+            num_questions=request.num_questions,
+            language=request.language
+        )
+        
+        # Save generation request to database
+        generation_request = GenerationRequest(
+            topic=request.topic,
+            num_questions=request.num_questions,
+            language=request.language,
+            model=request.model,
+            max_tokens=request.max_tokens,
+            interviewer_persona_id=interviewer_persona.id,
+            candidate_persona_id=candidate_persona.id,
+            video_id=video.id
+        )
+        await db["generation_requests"].insert_one(generation_request.model_dump())
+        logger.info(f"Generation request saved with ID: {generation_request.id}")
         
         # Return complete video with dialogues
         return await video_service.get_video_by_id(video.id)
