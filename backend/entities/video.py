@@ -22,6 +22,7 @@ class Video(BaseModel):
     conclusion: str
     conclusion_audio_url: str = ""
     final_audio_url: str = ""  # URL to the concatenated full audio
+    video_url: str = ""  # URL to the generated video file
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
