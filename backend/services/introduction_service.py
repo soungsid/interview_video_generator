@@ -78,7 +78,7 @@ class IntroductionService:
             }
         ]
     
-    def _generate_natural_intro(
+    def _generate_engaging_hook(
         self,
         topic: str,
         interviewer_persona: Persona,
@@ -86,29 +86,46 @@ class IntroductionService:
         model: str,
         max_tokens: int
     ) -> str:
-        """Generate natural introduction without clichés"""
+        """Generate an engaging hook/introduction that captures attention"""
         personality_desc = ", ".join(interviewer_persona.personality_traits)
         
-        system_prompt = f"""You are {interviewer_persona.name}, a professional YouTuber.
+        system_prompt = f"""You are {interviewer_persona.name}, a professional YouTuber creating engaging content.
 Your specialty: {interviewer_persona.specialty or 'general topics'}.
 Your personality: {personality_desc}.
 Speak in {language} language."""
         
-        user_prompt = f"""Create a brief, engaging introduction (2-3 sentences) for a YouTube interview about {topic}.
+        if language == 'fr':
+            user_prompt = f"""Créez une introduction captivante (2-3 phrases) pour une interview YouTube sur {topic}.
+
+RÈGLES IMPORTANTES:
+- N'utilisez PAS de clichés comme "Bienvenue sur ma chaîne", "Bonjour à tous", "Aujourd'hui on va parler de"
+- Commencez par une question intrigante ou un fait surprenant qui crée du suspense
+- Soyez professionnel et engageant
+- Montrez votre personnalité: {personality_desc}
+- Gardez ça court mais percutant
+
+Exemples d'EXCELLENTES intros (à adapter au sujet):
+- "Vous êtes-vous déjà demandé comment [aspect fascinant du {topic}]? Ce n'est pas de la magie — c'est [explication courte]. Aujourd'hui, nous allons découvrir ce qui se cache vraiment derrière."
+- "La plupart des développeurs utilisent [outil/concept lié à {topic}] tous les jours — mais combien comprennent vraiment comment ça fonctionne en coulisses? La réponse pourrait vous surprendre."
+- "Imaginez pouvoir [bénéfice lié à {topic}] en quelques lignes de code. C'est exactement ce que nous allons explorer aujourd'hui."
+
+IMPORTANT: NE PAS mentionner le candidat dans cette partie. Retournez UNIQUEMENT le texte d'introduction."""
+        else:
+            user_prompt = f"""Create a captivating introduction (2-3 sentences) for a YouTube interview about {topic}.
 
 IMPORTANT RULES:
-- DO NOT use clichés like "Welcome to my channel", "Bienvenue sur ma chaîne", "Welcome back"
-- Start directly with the topic or an interesting hook
-- Be natural and conversational
+- DO NOT use clichés like "Welcome to my channel", "Hi everyone", "Today we're going to talk about"
+- Start with an intriguing question or surprising fact that creates suspense
+- Be professional and engaging
 - Show your personality: {personality_desc}
-- Keep it short and engaging
+- Keep it short but impactful
 
-Examples of GOOD intros:
-- "Today we're exploring something fascinating: {topic}. I've got an expert here who's going to share some incredible insights."
-- "Let's dive into {topic}. This is a topic that's been generating a lot of buzz lately."
-- "I'm really excited about today's conversation on {topic}. We're going to uncover some interesting perspectives."
+Examples of EXCELLENT intros (adapt to your topic):
+- "Have you ever wondered how [fascinating aspect of {topic}]? That's not magic — it's [short explanation]. Today, we'll uncover what's really happening behind the scenes."
+- "Most developers use [tool/concept related to {topic}] every day — but how many actually understand how it works under the hood? The answer might surprise you."
+- "Imagine being able to [benefit related to {topic}] with just a few lines of code. That's exactly what we're exploring today."
 
-Return ONLY the introduction text."""
+IMPORTANT: DO NOT mention the candidate in this part. Return ONLY the introduction text."""
         
         messages = [
             {"role": "system", "content": system_prompt},
