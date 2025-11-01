@@ -1,10 +1,11 @@
 import logging
 from typing import List, Optional, Tuple
 
-from clients.ai_client import AIClient
+from clients.ai_providers.base_provider import BaseAIProvider
 from entities.dialogue import Role
 from entities.persona import Persona, Language
 from services.interjections import InterjectionService
+from services.introduction_service import IntroductionService
 
 logger = logging.getLogger(__name__)
 
@@ -12,9 +13,10 @@ logger = logging.getLogger(__name__)
 class ScriptGenerationService:
     """Service for generating interview video scripts with conversation memory"""
     
-    def __init__(self, ai_client: AIClient):
-        self.ai_client = ai_client
+    def __init__(self, ai_provider: BaseAIProvider):
+        self.ai_provider = ai_provider
         self.interjection_service = InterjectionService()
+        self.introduction_service = IntroductionService(ai_provider)
     
     def generate_video_script(
         self, 
@@ -49,11 +51,14 @@ class ScriptGenerationService:
         
         lang_code = language.value
         
-        # Generate introduction
-        introduction = self._generate_introduction(
-            topic, interviewer_persona, lang_code, model, max_tokens
+        # Generate engaging introduction with greeting exchange
+        intro, welcome, candidate_response, transition = self.introduction_service.generate_engaging_introduction(
+            topic, interviewer_persona, candidate_persona, language, model, max_tokens
         )
-        logger.info("Introduction generated")
+        logger.info("Engaging introduction generated")
+        
+        # Combine introduction parts
+        introduction = f"{intro}\n\n{welcome}\n\n{candidate_response}\n\n{transition}"
         
         # Generate dialogues with conversation memory
         dialogues = self._generate_dialogues(
