@@ -189,22 +189,45 @@ Return ONLY the welcome text."""
         model: str,
         max_tokens: int
     ) -> str:
-        """Generate candidate's response to greeting"""
+        """Generate candidate's natural response to greeting"""
         personality_desc = ", ".join(candidate_persona.personality_traits)
         
-        system_prompt = f"""You are {candidate_persona.name}, about to be interviewed.
+        system_prompt = f"""You are {candidate_persona.name}, responding to the interviewer's welcome.
 Your personality: {personality_desc}.
 Speak in {language} language."""
         
         if language == 'fr':
-            greeting_question = f"L'interviewer {interviewer_persona.name} vous demande: Comment allez-vous aujourd'hui?"
-        else:
-            greeting_question = f"The interviewer {interviewer_persona.name} asks you: How are you doing today?"
-        
-        user_prompt = f"""{greeting_question}
+            greeting_question = f"L'interviewer {interviewer_persona.name} vous accueille et vous demande comment vous allez."
+            user_prompt = f"""{greeting_question}
 
-Respond naturally and briefly (1-2 sentences). Show your personality: {personality_desc}.
-Be friendly and professional.
+Répondez naturellement en:
+1. Remerciant {interviewer_persona.name} par son prénom
+2. Disant que vous allez bien
+3. Exprimant votre enthousiasme pour l'interview (optionnel)
+
+Montrez votre personnalité: {personality_desc}.
+Soyez bref et naturel (1-2 phrases).
+
+Exemples:
+- "Merci {interviewer_persona.name}! Je vais très bien, merci. Ravi d'être ici avec vous."
+- "Merci beaucoup {interviewer_persona.name}! Ça va très bien. Je suis vraiment content de participer à cette discussion."
+
+Retournez UNIQUEMENT votre réponse."""
+        else:
+            greeting_question = f"The interviewer {interviewer_persona.name} welcomes you and asks how you're doing."
+            user_prompt = f"""{greeting_question}
+
+Respond naturally by:
+1. Thanking {interviewer_persona.name} by their first name
+2. Saying you're doing well
+3. Expressing enthusiasm for the interview (optional)
+
+Show your personality: {personality_desc}.
+Be brief and natural (1-2 sentences).
+
+Examples:
+- "Thank you {interviewer_persona.name}! I'm doing great, thanks. Happy to be here with you."
+- "Thanks so much {interviewer_persona.name}! I'm doing very well. Really excited to be part of this conversation."
 
 Return ONLY your response."""
         
@@ -216,8 +239,5 @@ Return ONLY your response."""
         return self.ai_provider.generate_completion(messages, model, max_tokens)
     
     def _generate_natural_transition(self, language: str) -> str:
-        """Generate natural transition expression"""
-        if language == 'fr':
-            return random.choice(self.TRANSITIONS_FR)
-        else:
-            return random.choice(self.TRANSITIONS_EN)
+        """This method is deprecated - no longer needed as intro is structured as dialogues"""
+        return ""
