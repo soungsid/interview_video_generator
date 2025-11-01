@@ -29,6 +29,8 @@ class VideoWithDialogues(BaseModel):
     id: str
     title: str
     topic: str
+    num_questions: int
+    language: Language
     introduction: str
     introduction_audio_url: str = ""
     conclusion: str
