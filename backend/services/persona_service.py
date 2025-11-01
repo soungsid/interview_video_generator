@@ -6,7 +6,7 @@ from entities.persona import (
     Persona, PersonaResponse, PersonaCreate, PersonaUpdate,
     PersonaType, Language
 )
-from clients.ai_client import AIClient
+from clients.ai_providers.base_provider import BaseAIProvider
 
 logger = logging.getLogger(__name__)
 
