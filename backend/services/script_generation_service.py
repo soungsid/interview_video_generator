@@ -263,4 +263,4 @@ Return ONLY the conclusion text."""
             {"role": "user", "content": user_prompt}
         ]
         
-        return self.ai_client.generate_completion(messages, model, max_tokens)
+        return self.ai_provider.generate_completion(messages, model, max_tokens)
