@@ -39,13 +39,27 @@ class MockProvider(BaseAIProvider):
                 else:
                     return "Joining me today is our expert guest. Welcome! How are you doing today?"
             
-            elif "candidate" in user_message.lower() and ("thank" in user_message.lower() or "merci" in user_message.lower()):
+            elif ("candidate" in user_message.lower() and ("thank" in user_message.lower() or "merci" in user_message.lower())) or ("responding to the interviewer" in user_message.lower()):
                 if "sarah" in user_message.lower():
                     return "Thank you Sarah! I'm doing great, thanks. Really excited to be here and share some insights about this fascinating topic."
                 elif "jean" in user_message.lower():
                     return "Merci Jean! Je vais très bien, merci. Je suis ravi d'être ici avec vous pour discuter de ce sujet passionnant."
+                elif "alex" in user_message.lower():
+                    return "Thank you Alex! I'm doing excellent, thanks. Happy to be here with you today."
+                elif "marie" in user_message.lower():
+                    return "Merci Marie! Ça va très bien. Je suis vraiment content de participer à cette discussion."
                 else:
-                    return "Thank you! I'm doing excellent, thanks. Happy to be here with you today."
+                    # Extract interviewer name from the message if possible
+                    import re
+                    name_match = re.search(r'interviewer (\w+)', user_message, re.IGNORECASE)
+                    if name_match:
+                        interviewer_name = name_match.group(1)
+                        if "fr" in user_message.lower() or "français" in user_message.lower():
+                            return f"Merci {interviewer_name}! Je vais très bien, merci. Ravi d'être ici avec vous."
+                        else:
+                            return f"Thank you {interviewer_name}! I'm doing great, thanks. Happy to be here with you."
+                    else:
+                        return "Thank you! I'm doing excellent, thanks. Happy to be here with you today."
             
             elif "question" in user_message.lower() and "#1" in user_message:
                 if "spring boot aop" in user_message.lower():
