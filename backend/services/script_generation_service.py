@@ -150,7 +150,7 @@ Important rules for realistic dialogue:
                             "content": f"As {interviewer_persona.name} (the INTERVIEWER), react briefly to the candidate's answer. Use this reaction: '{reaction}' and optionally add a short comment. Return ONLY the reaction text (keep it very short, 1-2 sentences max)."
                         })
                         
-                        reaction_text = self.ai_client.generate_completion(conversation_history, model, max_tokens)
+                        reaction_text = self.ai_provider.generate_completion(conversation_history, model, max_tokens)
                         
                         logger.info(f"[Reaction] {interviewer_persona.name}: {reaction_text}")
                         
