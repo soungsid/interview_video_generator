@@ -39,5 +39,6 @@ class VideoWithDialogues(BaseModel):
     conclusion: str
     conclusion_audio_url: str = ""
     final_audio_url: str = ""
+    video_url: str = ""  # URL to the generated video file
     created_at: datetime
     dialogues: List[DialogueResponse]
