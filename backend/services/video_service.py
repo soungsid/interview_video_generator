@@ -133,3 +133,16 @@ class VideoService:
         except Exception as e:
             logger.error(f"Failed to update audio URLs: {str(e)}")
             raise
+    
+    async def update_video_url(self, video_id: str, video_url: str):
+        """Update video with generated video file URL"""
+        try:
+            await self.db.videos.update_one(
+                {"id": video_id},
+                {"$set": {"video_url": video_url}}
+            )
+            logger.info(f"Updated video URL for video {video_id}")
+        except Exception as e:
+            logger.error(f"Failed to update video URL: {str(e)}")
+            raise
+
