@@ -1,24 +1,27 @@
 import logging
 import os
-import boto3
 from pathlib import Path
-from typing import List
-from botocore.exceptions import ClientError
+from typing import List, Optional
 from pydub import AudioSegment
+
+from services.audio_providers.audio_provider_factory import AudioProviderFactory
+from services.audio_providers.base_audio_provider import BaseAudioProvider
 
 logger = logging.getLogger(__name__)
 
 
 class AudioService:
-    """Service for generating and managing audio files using Amazon Polly"""
+    """Service for generating and managing audio files using multiple providers"""
     
-    def __init__(self):
-        """Initialize Amazon Polly client"""
-        self.aws_access_key = os.environ.get('AWS_ACCESS_KEY_ID')
-        self.aws_secret_key = os.environ.get('AWS_SECRET_ACCESS_KEY')
-        self.aws_region = os.environ.get('AWS_DEFAULT_REGION', 'us-east-1')
-        self.voice_interviewer = os.environ.get('POLLY_VOICE_INTERVIEWER', 'Matthew')
-        self.voice_candidate = os.environ.get('POLLY_VOICE_CANDIDATE', 'Joanna')
+    def __init__(self, provider_name: Optional[str] = None):
+        """Initialize AudioService with specified provider or default from environment
+        
+        Args:
+            provider_name: Name of audio provider (polly, openai-tts, elevenlabs)
+                          If None, uses DEFAULT_AUDIO_PROVIDER from environment
+        """
+        self.provider_name = provider_name or os.environ.get('DEFAULT_AUDIO_PROVIDER', 'polly')
+        self.provider: BaseAudioProvider = AudioProviderFactory.create_provider(self.provider_name)
         
         # Configure audio files directory
         audio_path = os.environ.get('AUDIO_FILES_PATH', './audio_files')
@@ -26,28 +29,30 @@ class AudioService:
         
         # Create directory if it doesn't exist
         self.audio_base_path.mkdir(parents=True, exist_ok=True)
+        logger.info(f"AudioService initialized with provider: {self.provider_name}")
         logger.info(f"Audio files directory: {self.audio_base_path}")
-        
-        if not self.aws_access_key or not self.aws_secret_key:
-            logger.warning("AWS credentials not configured - audio generation will be disabled")
-            self.client = None
-        else:
-            self.client = boto3.client(
-                'polly',
-                aws_access_key_id=self.aws_access_key,
-                aws_secret_access_key=self.aws_secret_key,
-                region_name=self.aws_region
-            )
-            logger.info(f"AudioService initialized with region: {self.aws_region}")
     
-    def generate_audio(self, text: str, output_path: Path, role: str = "interviewer") -> bool:
+    def generate_audio(self, text: str, output_path: Path, role: str = "interviewer", voice_id: Optional[str] = None) -> bool:
         """
-        Generate audio from text using Amazon Polly
+        Generate audio from text using configured provider
         
         Args:
             text: Text to synthesize
             output_path: Path where audio file will be saved
             role: "interviewer" or "candidate" to select appropriate voice
+            voice_id: Optional specific voice ID (if None, uses provider's default)
+        
+        Returns:
+            True if audio was generated, False if file already exists or error occurred
+        """
+        # Get voice ID if not provided
+        if voice_id is None:
+            if role == "interviewer":
+                voice_id = self.provider.get_default_interviewer_voice()
+            else:
+                voice_id = self.provider.get_default_candidate_voice()
+        
+        return self.provider.generate_audio(text, output_path, voice_id)
         
         Returns:
             True if audio was generated, False if file already exists or error occurred
