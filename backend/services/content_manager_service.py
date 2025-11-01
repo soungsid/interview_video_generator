@@ -173,7 +173,7 @@ Respond in JSON format:
             # Try to use monospace font
             try:
                 font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf", 24)
-            except:
+            except Exception:
                 font = ImageFont.load_default()
             
             # Draw code text
