@@ -29,7 +29,7 @@ class ScriptGenerationService:
         max_tokens: int = 4000
     ) -> dict:
         """
-        Generate a complete video script with introduction, dialogues, and conclusion.
+        Generate a complete video script with introduction dialogues, Q&A dialogues, and conclusion.
         Maintains conversation memory throughout the generation process.
         
         Args:
@@ -42,7 +42,7 @@ class ScriptGenerationService:
             max_tokens: Maximum tokens per response (default: 4000)
         
         Returns:
-            Dictionary with introduction, dialogues, conclusion, and personas
+            Dictionary with dialogues (including intro), conclusion, and personas
         """
         logger.info(f"Starting video script generation for topic: {topic}, questions: {num_questions}")
         logger.info(f"Interviewer: {interviewer_persona.name} ({interviewer_persona.specialty})")
@@ -51,31 +51,31 @@ class ScriptGenerationService:
         
         lang_code = language.value
         
-        # Generate engaging introduction with greeting exchange
-        intro, welcome, candidate_response, transition = self.introduction_service.generate_engaging_introduction(
+        # Generate engaging introduction as structured dialogues (question_number = 0)
+        intro_dialogues = self.introduction_service.generate_engaging_introduction(
             topic, interviewer_persona, candidate_persona, language, model, max_tokens
         )
-        logger.info("Engaging introduction generated")
+        logger.info(f"Engaging introduction generated with {len(intro_dialogues)} dialogue items")
         
-        # Combine introduction parts
-        introduction = f"{intro}\n\n{welcome}\n\n{candidate_response}\n\n{transition}"
-        
-        # Generate dialogues with conversation memory
-        dialogues = self._generate_dialogues(
+        # Generate Q&A dialogues with conversation memory (question_number >= 1)
+        qa_dialogues = self._generate_dialogues(
             topic, num_questions, interviewer_persona, candidate_persona, 
             lang_code, model, max_tokens
         )
-        logger.info(f"Generated {len(dialogues)} dialogues")
+        logger.info(f"Generated {len(qa_dialogues)} Q&A dialogues")
+        
+        # Combine intro dialogues + Q&A dialogues
+        all_dialogues = intro_dialogues + qa_dialogues
+        logger.info(f"Total dialogues: {len(all_dialogues)} (intro: {len(intro_dialogues)}, Q&A: {len(qa_dialogues)})")
         
         # Generate conclusion
         conclusion = self._generate_conclusion(
-            topic, dialogues, interviewer_persona, lang_code, model, max_tokens
+            topic, qa_dialogues, interviewer_persona, lang_code, model, max_tokens
         )
         logger.info("Conclusion generated")
         
         return {
-            "introduction": introduction,
-            "dialogues": dialogues,
+            "dialogues": all_dialogues,
             "conclusion": conclusion,
             "interviewer_persona": interviewer_persona,
             "candidate_persona": candidate_persona

@@ -103,6 +103,7 @@
 #====================================================================================================
 
 user_problem_statement: |
+  Phase 1 (COMPLETEE):
   Améliorer la fluidité du dialogue pour ressembler à une conversation naturelle entre humains.
   - Ajouter des interjections naturelles ("Ok...", "Eh bien...", etc.)
   - L'interviewer doit parfois réagir avec blagues ou remerciements
@@ -117,6 +118,18 @@ user_problem_statement: |
   - 5-10 personas prédéfinis
   - 15-20 interjections naturelles variées
   - Support multilingue (français + anglais)
+  
+  Phase 2 (EN COURS):
+  Feature 1: Améliorer la génération de l'introduction
+  - Utiliser des intros engageantes (ex: "Have you ever wondered...")
+  - Éviter les intros génériques et plates
+  
+  Feature 2: Fluidité de l'introduction
+  - Structurer l'intro en dialogues séparés (comme les Q&A)
+  - 3 dialogues d'introduction (question_number=0):
+    1. Intro engageante sur le sujet (YOUTUBER)
+    2. Welcome et présentation du candidat (YOUTUBER)
+    3. Réponse naturelle du candidat (CANDIDATE)
 
 backend:
   - task: "Créer modèle Persona (entities/persona.py)"
@@ -226,6 +239,46 @@ backend:
       - working: true
         agent: "main"
         comment: "Router persona_routes ajouté au serveur FastAPI"
+  
+  - task: "Feature 1: Améliorer génération d'intros engageantes"
+    implemented: true
+    working: true
+    file: "/app/backend/services/introduction_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Méthode _generate_engaging_hook créée avec prompts améliorés pour des intros captivantes (style 'Have you ever wondered...'). Exemples d'excellentes intros fournis en FR et EN. Évite les clichés comme 'Bienvenue sur ma chaîne'."
+  
+  - task: "Feature 2: Structurer l'intro en dialogues fluides"
+    implemented: true
+    working: true
+    file: "/app/backend/services/introduction_service.py, /app/backend/services/script_generation_service.py, /app/backend/entities/video.py, /app/backend/services/video_service.py, /app/backend/api/routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: |
+          Introduction restructurée en 3 dialogues séparés (question_number=0):
+          1. Intro engageante sur le sujet (YOUTUBER)
+          2. Welcome et présentation du candidat par nom (YOUTUBER) 
+          3. Réponse naturelle du candidat nommant l'interviewer (CANDIDATE)
+          
+          Modifications:
+          - IntroductionService.generate_engaging_introduction() retourne maintenant une List[dict] de dialogues
+          - ScriptGenerationService combine intro_dialogues + qa_dialogues
+          - Video.introduction et introduction_audio_url sont maintenant Optional (backward compatibility)
+          - VideoService adapté pour gérer l'intro comme dialogues
+          - Routes adaptées pour générer audio des dialogues d'intro (00_youtuber.mp3, etc.)
+          
+          Prompts améliorés pour:
+          - _generate_engaging_hook: Intros captivantes avec questions intrigantes
+          - _generate_candidate_welcome: Présentation naturelle du candidat
+          - _generate_candidate_greeting_response: Réponse du candidat remerciant l'interviewer par son nom
 
 metadata:
   created_by: "main_agent"
@@ -234,7 +287,9 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Feature 1: Améliorer génération d'intros engageantes"
+    - "Feature 2: Structurer l'intro en dialogues fluides"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -283,3 +338,31 @@ agent_communication:
       ⚠️ MINOR ISSUE: One Java interview had only 33% interjection rate (acceptable variance)
       
       🚀 SYSTEM READY FOR PRODUCTION - All core features working as designed!
+  - agent: "main"
+    message: |
+      Phase 2 implémentée - Amélioration de l'introduction:
+      
+      FEATURE 1 - Intros engageantes:
+      ✅ Prompts améliorés dans IntroductionService._generate_engaging_hook()
+      ✅ Utilise des questions captivantes style "Have you ever wondered..."
+      ✅ Évite les clichés comme "Bienvenue sur ma chaîne"
+      ✅ Exemples d'excellentes intros fournis en FR et EN
+      
+      FEATURE 2 - Fluidité de l'introduction:
+      ✅ Introduction restructurée en 3 dialogues séparés (question_number=0)
+         1. Intro engageante sur le sujet (YOUTUBER)
+         2. Welcome et présentation du candidat (YOUTUBER)
+         3. Réponse du candidat nommant l'interviewer (CANDIDATE)
+      ✅ IntroductionService retourne List[dict] au lieu de Tuple[str]
+      ✅ ScriptGenerationService combine intro + Q&A en une seule liste de dialogues
+      ✅ Video.introduction rendu Optional pour rétrocompatibilité
+      ✅ VideoService et Routes adaptés pour nouvelle structure
+      
+      Backend redémarré avec succès.
+      
+      Prêt pour tests:
+      1. Tester génération vidéo avec nouvelle structure d'intro
+      2. Vérifier qualité des intros (engageantes, pas de clichés)
+      3. Vérifier fluidité: intro -> welcome -> réponse candidat
+      4. Tester en français et anglais
+      5. Vérifier que dialogues ont bien question_number=0 pour l'intro

@@ -28,12 +28,13 @@ class VideoService:
         title = script_data.get('seo_title', f"Simulated Interview: {topic}")
         
         # Create video document
+        # Note: introduction is now optional as it's stored as dialogues
         video = Video(
             title=title,
             topic=topic,
             num_questions=num_questions,
             language=language,
-            introduction=script_data["introduction"],
+            introduction=script_data.get("introduction"),  # Optional for backward compatibility
             conclusion=script_data["conclusion"]
         )
         
@@ -44,7 +45,7 @@ class VideoService:
         
         logger.info(f"Video created with ID: {video.id}")
         
-        # Save dialogues
+        # Save dialogues (including introduction dialogues with question_number=0)
         for dialogue_data in script_data["dialogues"]:
             dialogue = Dialogue(
                 **dialogue_data,
@@ -95,12 +96,8 @@ class VideoService:
     async def update_video_audio_urls(self, video_id: str, audio_service):
         """Update video and dialogues with audio URLs"""
         try:
-            # Update introduction audio URL
-            intro_audio_url = audio_service.generate_video_audio_url(video_id, "00_introduction.mp3")
-            await self.db.videos.update_one(
-                {"id": video_id},
-                {"$set": {"introduction_audio_url": intro_audio_url}}
-            )
+            # NOTE: introduction_audio_url is legacy - new videos have intro as dialogues
+            # This is kept for backward compatibility only
             
             # Update conclusion audio URL
             conclusion_audio_url = audio_service.generate_video_audio_url(video_id, f"99_conclusion.mp3")
@@ -116,7 +113,7 @@ class VideoService:
                 {"$set": {"final_audio_url": final_audio_url}}
             )
             
-            # Update dialogue audio URLs
+            # Update dialogue audio URLs (including introduction dialogues with question_number=0)
             dialogues_cursor = self.db.dialogues.find({"video_id": video_id})
             dialogues = await dialogues_cursor.to_list(1000)
             

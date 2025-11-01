@@ -16,8 +16,9 @@ class Video(BaseModel):
     topic: str
     num_questions: int = 3  # Number of questions in the interview
     language: Language = Language.ENGLISH  # Language of the interview
-    introduction: str
-    introduction_audio_url: str = ""
+    # Legacy fields - kept for backward compatibility with old videos
+    introduction: Optional[str] = None
+    introduction_audio_url: Optional[str] = None
     conclusion: str
     conclusion_audio_url: str = ""
     final_audio_url: str = ""  # URL to the concatenated full audio
@@ -31,8 +32,9 @@ class VideoWithDialogues(BaseModel):
     topic: str
     num_questions: int
     language: Language
-    introduction: str
-    introduction_audio_url: str = ""
+    # Legacy fields - kept for backward compatibility with old videos
+    introduction: Optional[str] = None
+    introduction_audio_url: Optional[str] = None
     conclusion: str
     conclusion_audio_url: str = ""
     final_audio_url: str = ""
