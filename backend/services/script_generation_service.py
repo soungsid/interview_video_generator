@@ -175,7 +175,7 @@ Show your personality: {interviewer_personality}.
 Return ONLY the question text, no labels or formatting."""
             })
             
-            question_text = self.ai_client.generate_completion(conversation_history, model, max_tokens)
+            question_text = self.ai_provider.generate_completion(conversation_history, model, max_tokens)
             
             # Log the question
             logger.info(f"\n[Question {i}] {interviewer_persona.name}: {question_text}")
