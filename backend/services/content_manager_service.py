@@ -336,7 +336,7 @@ Respond in JSON format:
             # Draw placeholder text
             try:
                 font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 48)
-            except:
+            except Exception:
                 font = ImageFont.load_default()
             
             suggestion = decision.get("content_suggestion", "Visual Content")
