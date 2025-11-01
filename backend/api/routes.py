@@ -6,11 +6,15 @@ from pathlib import Path
 
 from entities.video import Video, VideoWithDialogues
 from entities.requests import GenerateVideoRequest
+from entities.generation_request import GenerationRequest
 from entities.persona import Language
-from config.dependencies import get_script_service, get_video_service, get_database, get_ai_client
+from config.dependencies import (
+    get_script_service, get_video_service, get_database, 
+    get_ai_provider, get_seo_service
+)
 from services.persona_service import PersonaService
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from clients.ai_client import AIClient
+from clients.ai_providers.base_provider import BaseAIProvider
 
 logger = logging.getLogger(__name__)
 
@@ -20,10 +24,10 @@ api_router = APIRouter(prefix="/api")
 
 def get_persona_service(
     db: AsyncIOMotorDatabase = Depends(get_database),
-    ai_client: AIClient = Depends(get_ai_client)
+    ai_provider: BaseAIProvider = Depends(get_ai_provider)
 ) -> PersonaService:
     """Dependency to get PersonaService instance"""
-    return PersonaService(db, ai_client)
+    return PersonaService(db, ai_provider)
 
 
 @api_router.get("/")
