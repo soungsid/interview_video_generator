@@ -239,6 +239,46 @@ backend:
       - working: true
         agent: "main"
         comment: "Router persona_routes ajouté au serveur FastAPI"
+  
+  - task: "Feature 1: Améliorer génération d'intros engageantes"
+    implemented: true
+    working: true
+    file: "/app/backend/services/introduction_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Méthode _generate_engaging_hook créée avec prompts améliorés pour des intros captivantes (style 'Have you ever wondered...'). Exemples d'excellentes intros fournis en FR et EN. Évite les clichés comme 'Bienvenue sur ma chaîne'."
+  
+  - task: "Feature 2: Structurer l'intro en dialogues fluides"
+    implemented: true
+    working: true
+    file: "/app/backend/services/introduction_service.py, /app/backend/services/script_generation_service.py, /app/backend/entities/video.py, /app/backend/services/video_service.py, /app/backend/api/routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: |
+          Introduction restructurée en 3 dialogues séparés (question_number=0):
+          1. Intro engageante sur le sujet (YOUTUBER)
+          2. Welcome et présentation du candidat par nom (YOUTUBER) 
+          3. Réponse naturelle du candidat nommant l'interviewer (CANDIDATE)
+          
+          Modifications:
+          - IntroductionService.generate_engaging_introduction() retourne maintenant une List[dict] de dialogues
+          - ScriptGenerationService combine intro_dialogues + qa_dialogues
+          - Video.introduction et introduction_audio_url sont maintenant Optional (backward compatibility)
+          - VideoService adapté pour gérer l'intro comme dialogues
+          - Routes adaptées pour générer audio des dialogues d'intro (00_youtuber.mp3, etc.)
+          
+          Prompts améliorés pour:
+          - _generate_engaging_hook: Intros captivantes avec questions intrigantes
+          - _generate_candidate_welcome: Présentation naturelle du candidat
+          - _generate_candidate_greeting_response: Réponse du candidat remerciant l'interviewer par son nom
 
 metadata:
   created_by: "main_agent"
