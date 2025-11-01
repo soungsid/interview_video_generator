@@ -159,7 +159,7 @@ Respond with ONLY the number (1, 2, 3, etc.) of the best interviewer for this to
         ]
         
         try:
-            response = self.ai_client.generate_completion(messages, model, max_tokens=10)
+            response = self.ai_provider.generate_completion(messages, model, max_tokens=10)
             # Extract number from response
             import re
             match = re.search(r'\d+', response)
