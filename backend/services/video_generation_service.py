@@ -232,7 +232,6 @@ class VideoGenerationService:
         for segment in dialogue_segments:
             start_time = segment["start_time"]
             end_time = segment["end_time"]
-            is_intro = segment.get("is_intro", False)
             role = segment["role"]
             
             # Position avatars based on who's speaking
