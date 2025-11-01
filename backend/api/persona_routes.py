@@ -7,9 +7,9 @@ from entities.persona import (
     PersonaType, Language
 )
 from services.persona_service import PersonaService
-from config.dependencies import get_database, get_ai_client
+from config.dependencies import get_database, get_ai_provider
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from clients.ai_client import AIClient
+from clients.ai_providers.base_provider import BaseAIProvider
 
 logger = logging.getLogger(__name__)
 
@@ -18,10 +18,10 @@ router = APIRouter(prefix="/api/personas", tags=["personas"])
 
 def get_persona_service(
     db: AsyncIOMotorDatabase = Depends(get_database),
-    ai_client: AIClient = Depends(get_ai_client)
+    ai_provider: BaseAIProvider = Depends(get_ai_provider)
 ) -> PersonaService:
     """Dependency to get PersonaService instance"""
-    return PersonaService(db, ai_client)
+    return PersonaService(db, ai_provider)
 
 
 @router.post("", response_model=PersonaResponse, status_code=201)
