@@ -1,9 +1,10 @@
 from pydantic import BaseModel, Field, ConfigDict
-from typing import List
+from typing import List, Optional
 from datetime import datetime, timezone
 import uuid
 
 from .dialogue import DialogueResponse
+from .persona import Language
 
 
 class Video(BaseModel):
@@ -13,6 +14,8 @@ class Video(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     title: str
     topic: str
+    num_questions: int = 3  # Number of questions in the interview
+    language: Language = Language.ENGLISH  # Language of the interview
     introduction: str
     introduction_audio_url: str = ""
     conclusion: str
