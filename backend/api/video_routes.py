@@ -52,7 +52,7 @@ async def generate_video(
             )
         
         # Generate video
-        video_path = await video_generator.generate_video(
+        await video_generator.generate_video(
             video=video,
             audio_path=final_audio_path,
             video_id=video_id
