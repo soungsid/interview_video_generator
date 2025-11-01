@@ -103,6 +103,7 @@
 #====================================================================================================
 
 user_problem_statement: |
+  Phase 1 (COMPLETEE):
   Améliorer la fluidité du dialogue pour ressembler à une conversation naturelle entre humains.
   - Ajouter des interjections naturelles ("Ok...", "Eh bien...", etc.)
   - L'interviewer doit parfois réagir avec blagues ou remerciements
@@ -117,6 +118,18 @@ user_problem_statement: |
   - 5-10 personas prédéfinis
   - 15-20 interjections naturelles variées
   - Support multilingue (français + anglais)
+  
+  Phase 2 (EN COURS):
+  Feature 1: Améliorer la génération de l'introduction
+  - Utiliser des intros engageantes (ex: "Have you ever wondered...")
+  - Éviter les intros génériques et plates
+  
+  Feature 2: Fluidité de l'introduction
+  - Structurer l'intro en dialogues séparés (comme les Q&A)
+  - 3 dialogues d'introduction (question_number=0):
+    1. Intro engageante sur le sujet (YOUTUBER)
+    2. Welcome et présentation du candidat (YOUTUBER)
+    3. Réponse naturelle du candidat (CANDIDATE)
 
 backend:
   - task: "Créer modèle Persona (entities/persona.py)"
