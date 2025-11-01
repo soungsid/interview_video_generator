@@ -5,6 +5,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from entities.video import Video, VideoWithDialogues
 from entities.dialogue import Dialogue, DialogueResponse
+from entities.persona import Language
 
 logger = logging.getLogger(__name__)
 
@@ -15,12 +16,23 @@ class VideoService:
     def __init__(self, db: AsyncIOMotorDatabase):
         self.db = db
     
-    async def create_video(self, topic: str, script_data: dict) -> Video:
+    async def create_video(
+        self, 
+        topic: str, 
+        script_data: dict,
+        num_questions: int = 3,
+        language: Language = Language.ENGLISH
+    ) -> Video:
         """Create and save a video with its script"""
+        # Use SEO title if available, otherwise use default format
+        title = script_data.get('seo_title', f"Simulated Interview: {topic}")
+        
         # Create video document
         video = Video(
-            title=f"Simulated Interview: {topic}",
+            title=title,
             topic=topic,
+            num_questions=num_questions,
+            language=language,
             introduction=script_data["introduction"],
             conclusion=script_data["conclusion"]
         )
