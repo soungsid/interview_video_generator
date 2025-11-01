@@ -338,3 +338,31 @@ agent_communication:
       ⚠️ MINOR ISSUE: One Java interview had only 33% interjection rate (acceptable variance)
       
       🚀 SYSTEM READY FOR PRODUCTION - All core features working as designed!
+  - agent: "main"
+    message: |
+      Phase 2 implémentée - Amélioration de l'introduction:
+      
+      FEATURE 1 - Intros engageantes:
+      ✅ Prompts améliorés dans IntroductionService._generate_engaging_hook()
+      ✅ Utilise des questions captivantes style "Have you ever wondered..."
+      ✅ Évite les clichés comme "Bienvenue sur ma chaîne"
+      ✅ Exemples d'excellentes intros fournis en FR et EN
+      
+      FEATURE 2 - Fluidité de l'introduction:
+      ✅ Introduction restructurée en 3 dialogues séparés (question_number=0)
+         1. Intro engageante sur le sujet (YOUTUBER)
+         2. Welcome et présentation du candidat (YOUTUBER)
+         3. Réponse du candidat nommant l'interviewer (CANDIDATE)
+      ✅ IntroductionService retourne List[dict] au lieu de Tuple[str]
+      ✅ ScriptGenerationService combine intro + Q&A en une seule liste de dialogues
+      ✅ Video.introduction rendu Optional pour rétrocompatibilité
+      ✅ VideoService et Routes adaptés pour nouvelle structure
+      
+      Backend redémarré avec succès.
+      
+      Prêt pour tests:
+      1. Tester génération vidéo avec nouvelle structure d'intro
+      2. Vérifier qualité des intros (engageantes, pas de clichés)
+      3. Vérifier fluidité: intro -> welcome -> réponse candidat
+      4. Tester en français et anglais
+      5. Vérifier que dialogues ont bien question_number=0 pour l'intro
