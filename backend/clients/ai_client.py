@@ -1,52 +1,46 @@
 import os
 import logging
 from typing import List, Optional
-from openai import OpenAI
-from fastapi import HTTPException
+
+from clients.ai_providers.provider_factory import AIProviderFactory
+from clients.ai_providers.base_provider import BaseAIProvider
 
 logger = logging.getLogger(__name__)
 
 
 class AIClient:
-    """Client for interacting with AI models (DeepSeek, OpenAI, etc.)"""
+    """Client for interacting with multiple AI providers (DeepSeek, OpenAI, Gemini)"""
     
-    def __init__(self):
-        self.api_key = os.environ.get('DEEPSEEK_API_KEY')
-        self.base_url = os.environ.get('DEEPSEEK_BASE_URL', 'https://api.deepseek.com/v1')
-        self.default_model = os.environ.get('DEFAULT_AI_MODEL', 'deepseek-chat')
+    def __init__(self, provider_name: Optional[str] = None):
+        """Initialize AIClient with specified provider or default from environment
         
-        if not self.api_key:
-            raise ValueError("DEEPSEEK_API_KEY not found in environment")
-        
-        self.client = OpenAI(
-            api_key=self.api_key,
-            base_url=self.base_url
-        )
-        logger.info(f"AIClient initialized with base_url: {self.base_url}, default_model: {self.default_model}")
+        Args:
+            provider_name: Name of provider (deepseek, openai, gemini)
+                          If None, uses DEFAULT_AI_PROVIDER from environment
+        """
+        self.provider_name = provider_name or os.environ.get('DEFAULT_AI_PROVIDER', 'deepseek')
+        self.provider: BaseAIProvider = AIProviderFactory.create_provider(self.provider_name)
+        logger.info(f"AIClient initialized with provider: {self.provider_name}")
     
     def generate_completion(self, messages: List[dict], model: Optional[str] = None, max_tokens: int = 4000) -> str:
-        """Generate a completion using the AI model with conversation history
+        """Generate a completion using the configured AI provider
         
         Args:
             messages: Conversation history
-            model: AI model to use (optional)
+            model: AI model to use (optional, uses provider's default if not specified)
             max_tokens: Maximum tokens in response (default: 4000)
+        
+        Returns:
+            Generated text completion
         """
-        try:
-            model_to_use = model or self.default_model
-            logger.info(f"Generating completion with model: {model_to_use}, max_tokens: {max_tokens}")
-            logger.debug(f"Messages: {messages}")
-            
-            response = self.client.chat.completions.create(
-                model=model_to_use,
-                messages=messages,
-                temperature=0.7,
-                max_tokens=max_tokens
-            )
-            
-            content = response.choices[0].message.content
-            logger.info(f"Completion generated successfully: {len(content)} characters")
-            return content
-        except Exception as e:
-            logger.error(f"Error generating completion: {str(e)}")
-            raise HTTPException(status_code=500, detail=f"AI generation error: {str(e)}")
+        return self.provider.generate_completion(messages, model, max_tokens)
+    
+    def get_default_model(self) -> str:
+        """Get the default model for current provider"""
+        return self.provider.get_default_model()
+    
+    @staticmethod
+    def get_available_providers() -> list:
+        """Get list of available AI providers based on environment configuration"""
+        return AIProviderFactory.get_available_providers()
+
