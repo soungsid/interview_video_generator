@@ -206,7 +206,7 @@ Show your personality: {candidate_personality}.
 Return ONLY the answer text, no labels or formatting."""
             })
             
-            answer_text = self.ai_client.generate_completion(conversation_history, model, max_tokens)
+            answer_text = self.ai_provider.generate_completion(conversation_history, model, max_tokens)
             
             # Make sure interjection is included
             if interjection and not any(answer_text.startswith(inter.strip()) for inter in [interjection] + 
