@@ -39,9 +39,11 @@ class AIProviderFactory:
             return OpenAIProvider()
         elif provider_name == 'gemini':
             return GeminiProvider()
+        elif provider_name == 'mock':
+            return MockProvider()
         else:
-            logger.warning(f"Unknown provider '{provider_name}', falling back to DeepSeek")
-            return DeepSeekProvider()
+            logger.warning(f"Unknown provider '{provider_name}', falling back to Mock for testing")
+            return MockProvider()
     
     @staticmethod
     def get_available_providers() -> list:
