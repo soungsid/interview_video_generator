@@ -28,12 +28,13 @@ class VideoService:
         title = script_data.get('seo_title', f"Simulated Interview: {topic}")
         
         # Create video document
+        # Note: introduction is now optional as it's stored as dialogues
         video = Video(
             title=title,
             topic=topic,
             num_questions=num_questions,
             language=language,
-            introduction=script_data["introduction"],
+            introduction=script_data.get("introduction"),  # Optional for backward compatibility
             conclusion=script_data["conclusion"]
         )
         
@@ -44,7 +45,7 @@ class VideoService:
         
         logger.info(f"Video created with ID: {video.id}")
         
-        # Save dialogues
+        # Save dialogues (including introduction dialogues with question_number=0)
         for dialogue_data in script_data["dialogues"]:
             dialogue = Dialogue(
                 **dialogue_data,
