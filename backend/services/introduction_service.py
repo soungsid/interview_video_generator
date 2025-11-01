@@ -1,42 +1,16 @@
 import logging
 import random
-from typing import Tuple
+from typing import List
 
 from clients.ai_providers.base_provider import BaseAIProvider
 from entities.persona import Persona, Language
+from entities.dialogue import Role
 
 logger = logging.getLogger(__name__)
 
 
 class IntroductionService:
-    """Service for generating engaging introductions without clichés"""
-    
-    # Transition expressions (varied)
-    TRANSITIONS_EN = [
-        "Great!",
-        "Excellent!",
-        "Perfect!",
-        "Wonderful!",
-        "Fantastic!",
-        "That's great to hear!",
-        "Nice!",
-        "Awesome!",
-        "Good to know!",
-        "I'm glad to hear that!"
-    ]
-    
-    TRANSITIONS_FR = [
-        "Parfait!",
-        "Excellent!",
-        "Très bien!",
-        "Formidable!",
-        "Super!",
-        "C'est génial!",
-        "Magnifique!",
-        "Fantastique!",
-        "Ravi de l'entendre!",
-        "Bon à savoir!"
-    ]
+    """Service for generating engaging introductions as structured dialogues"""
     
     def __init__(self, ai_provider: BaseAIProvider):
         self.ai_provider = ai_provider
@@ -49,37 +23,60 @@ class IntroductionService:
         language: Language,
         model: str = None,
         max_tokens: int = 4000
-    ) -> Tuple[str, str, str, str]:
-        """Generate an engaging introduction with:
-        1. Natural intro (no clichés like "Welcome to my channel")
-        2. Welcome to candidate by name
-        3. Candidate's response
-        4. Natural transition before first question
+    ) -> List[dict]:
+        """Generate an engaging introduction as structured dialogues.
+        
+        Returns a list of 3 dialogue items:
+        1. Engaging intro about the topic (YOUTUBER, question_number=0)
+        2. Welcome to candidate by name (YOUTUBER, question_number=0)
+        3. Candidate's response (CANDIDATE, question_number=0)
+        
+        Args:
+            topic: The interview topic
+            interviewer_persona: The interviewer persona
+            candidate_persona: The candidate persona
+            language: Language for the interview
+            model: AI model to use (optional)
+            max_tokens: Maximum tokens per response
         
         Returns:
-            Tuple of (intro, welcome, candidate_response, transition)
+            List of dialogue dictionaries with role, text, and question_number
         """
         lang_code = language.value
         
-        # 1. Generate natural introduction
-        intro = self._generate_natural_intro(
+        # 1. Generate engaging introduction about topic
+        intro_text = self._generate_engaging_hook(
             topic, interviewer_persona, lang_code, model, max_tokens
         )
         
         # 2. Generate welcome to candidate
-        welcome = self._generate_candidate_welcome(
+        welcome_text = self._generate_candidate_welcome(
             candidate_persona, interviewer_persona, lang_code, model, max_tokens
         )
         
         # 3. Generate candidate's response
-        candidate_response = self._generate_candidate_greeting_response(
+        candidate_response_text = self._generate_candidate_greeting_response(
             candidate_persona, interviewer_persona, lang_code, model, max_tokens
         )
         
-        # 4. Generate natural transition
-        transition = self._generate_natural_transition(lang_code)
-        
-        return intro, welcome, candidate_response, transition
+        # Return as structured dialogues
+        return [
+            {
+                "role": Role.YOUTUBER,
+                "text": intro_text,
+                "question_number": 0
+            },
+            {
+                "role": Role.YOUTUBER,
+                "text": welcome_text,
+                "question_number": 0
+            },
+            {
+                "role": Role.CANDIDATE,
+                "text": candidate_response_text,
+                "question_number": 0
+            }
+        ]
     
     def _generate_natural_intro(
         self,
