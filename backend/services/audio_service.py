@@ -53,49 +53,6 @@ class AudioService:
                 voice_id = self.provider.get_default_candidate_voice()
         
         return self.provider.generate_audio(text, output_path, voice_id)
-        
-        Returns:
-            True if audio was generated, False if file already exists or error occurred
-        """
-        if not self.client:
-            logger.error("Polly client not initialized - skipping audio generation")
-            return False
-        
-        # Check if audio file already exists
-        if output_path.exists():
-            logger.info(f"Audio file already exists: {output_path}")
-            return False
-        
-        try:
-            # Select voice based on role
-            voice_id = self.voice_interviewer if role == "interviewer" else self.voice_candidate
-            
-            logger.info(f"Generating audio: role={role}, voice={voice_id}, text_length={len(text)}")
-            
-            # Call Amazon Polly
-            response = self.client.synthesize_speech(
-                Engine='neural',
-                Text=text,
-                TextType='text',
-                OutputFormat='mp3',
-                VoiceId=voice_id
-            )
-            
-            # Save audio to file
-            output_path.parent.mkdir(parents=True, exist_ok=True)
-            
-            with open(output_path, 'wb') as f:
-                f.write(response['AudioStream'].read())
-            
-            logger.info(f"Audio generated successfully: {output_path}")
-            return True
-            
-        except ClientError as e:
-            logger.error(f"Polly API error: {e.response['Error']['Message']}")
-            return False
-        except Exception as e:
-            logger.error(f"Failed to generate audio: {str(e)}")
-            return False
     
     def concatenate_audio_files(self, audio_paths: List[Path], output_path: Path) -> bool:
         """
@@ -146,6 +103,11 @@ class AudioService:
     def get_video_audio_dir(self, video_id: str) -> Path:
         """Get audio directory for a specific video"""
         return self.get_audio_base_path() / video_id
+    
+    def generate_video_audio_url(self, video_id: str, filename: str) -> str:
+        """Generate audio URL for API response"""
+        return f"/api/videos/{video_id}/audio/{filename}"
+
     
     def generate_video_audio_url(self, video_id: str, filename: str) -> str:
         """Generate audio URL for API response"""
