@@ -287,7 +287,9 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Feature 1: Améliorer génération d'intros engageantes"
+    - "Feature 2: Structurer l'intro en dialogues fluides"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
