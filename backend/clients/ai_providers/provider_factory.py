@@ -6,6 +6,7 @@ from .base_provider import BaseAIProvider
 from .deepseek_provider import DeepSeekProvider
 from .openai_provider import OpenAIProvider
 from .gemini_provider import GeminiProvider
+from .mock_provider import MockProvider
 
 logger = logging.getLogger(__name__)
 
