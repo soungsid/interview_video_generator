@@ -147,9 +147,6 @@ class VideoGenerationService:
         
         Analyzes individual audio files to get precise timings for each dialogue.
         """
-        from services.audio_service import AudioService
-        audio_service = AudioService()
-        
         segments = []
         current_time = 0.0
         
