@@ -118,7 +118,7 @@ class PersonaService:
             raise ValueError("Not enough personas available. Need at least one interviewer and one candidate.")
         
         # Use AI to select the best interviewer
-        if self.ai_client and len(interviewers) > 1:
+        if self.ai_provider and len(interviewers) > 1:
             interviewer = await self._ai_select_interviewer(topic, interviewers, model)
         else:
             # Fallback: select first available
