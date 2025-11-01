@@ -142,15 +142,44 @@ IMPORTANT: DO NOT mention the candidate in this part. Return ONLY the introducti
         model: str,
         max_tokens: int
     ) -> str:
-        """Generate welcome message to candidate by name"""
+        """Generate welcome message to candidate by name and brief introduction"""
         personality_desc = ", ".join(interviewer_persona.personality_traits)
         
-        if language == 'fr':
-            template = f"""Bienvenue {candidate_persona.name}! Comment allez-vous aujourd'hui?"""
-        else:
-            template = f"""Welcome {candidate_persona.name}! How are you doing today?"""
+        system_prompt = f"""You are {interviewer_persona.name}, welcoming your guest to the interview.
+Your personality: {personality_desc}.
+Speak in {language} language."""
         
-        return template
+        if language == 'fr':
+            user_prompt = f"""Accueillez votre invité {candidate_persona.name} de manière naturelle et professionnelle.
+
+Présentez brièvement qui il/elle est (sans entrer dans trop de détails) et demandez-lui comment il/elle va.
+
+Format suggéré:
+"Avec moi aujourd'hui, [Candidate Name], [brève présentation]. Bienvenue [Candidate Name]! Comment allez-vous?"
+
+Soyez naturel et montrez votre personnalité: {personality_desc}.
+Gardez ça court (2-3 phrases maximum).
+
+Retournez UNIQUEMENT le texte de bienvenue."""
+        else:
+            user_prompt = f"""Welcome your guest {candidate_persona.name} in a natural and professional way.
+
+Briefly introduce who they are (without going into too much detail) and ask how they're doing.
+
+Suggested format:
+"Joining me today is [Candidate Name], [brief introduction]. Welcome [Candidate Name]! How are you doing today?"
+
+Be natural and show your personality: {personality_desc}.
+Keep it short (2-3 sentences maximum).
+
+Return ONLY the welcome text."""
+        
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
+        
+        return self.ai_provider.generate_completion(messages, model, max_tokens)
     
     def _generate_candidate_greeting_response(
         self,
