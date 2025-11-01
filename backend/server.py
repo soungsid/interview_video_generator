@@ -5,7 +5,10 @@ import os
 import logging
 from pathlib import Path
 
-from api.routes import api_router
+from api.health_routes import health_router
+from api.video_script_routes import video_script_router
+from api.audio_routes import audio_router
+from api.video_routes import video_router
 from api.persona_routes import router as persona_router
 from config.database import close_database
 
@@ -20,10 +23,13 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Create the main app
-app = FastAPI(title="InterviewVideoGenerator API", version="1.0.0")
+app = FastAPI(title="InterviewVideoGenerator API", version="2.0.0")
 
 # Include the API routers
-app.include_router(api_router)
+app.include_router(health_router)
+app.include_router(video_script_router)
+app.include_router(audio_router)
+app.include_router(video_router)
 app.include_router(persona_router)
 
 # Add CORS middleware
