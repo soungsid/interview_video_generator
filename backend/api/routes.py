@@ -210,17 +210,18 @@ async def generate_video_audio(video_id: str):
             "failed": 0
         }
         
-        # Generate audio for introduction
-        intro_path = audio_dir / "00_introduction.mp3"
-        if audio_service.generate_audio(video.introduction, intro_path, "interviewer"):
-            stats["generated"] += 1
-        elif intro_path.exists():
-            stats["skipped"] += 1
-        else:
-            stats["failed"] += 1
-        audio_files.append(intro_path)
+        # Generate audio for introduction (legacy - only if video has introduction field)
+        if video.introduction:
+            intro_path = audio_dir / "00_introduction.mp3"
+            if audio_service.generate_audio(video.introduction, intro_path, "interviewer"):
+                stats["generated"] += 1
+            elif intro_path.exists():
+                stats["skipped"] += 1
+            else:
+                stats["failed"] += 1
+            audio_files.append(intro_path)
         
-        # Generate audio for each dialogue
+        # Generate audio for each dialogue (including intro dialogues with question_number=0)
         for dialogue in video.dialogues:
             role = "interviewer" if dialogue.role == "YOUTUBER" else "candidate"
             filename = f"{dialogue.question_number:02d}_{dialogue.role.lower()}.mp3"
@@ -236,7 +237,7 @@ async def generate_video_audio(video_id: str):
             audio_files.append(audio_path)
         
         # Generate audio for conclusion
-        conclusion_path = audio_dir / f"{len(video.dialogues)+1:02d}_conclusion.mp3"
+        conclusion_path = audio_dir / f"99_conclusion.mp3"
         if audio_service.generate_audio(video.conclusion, conclusion_path, "interviewer"):
             stats["generated"] += 1
         elif conclusion_path.exists():
