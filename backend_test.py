@@ -11,7 +11,7 @@ import sys
 from typing import Dict, List, Any
 
 # Backend URL from supervisor configuration
-BASE_URL = "https://3e81b424-38b0-499a-9830-cb44b859fb2d.preview.emergentagent.com/api"
+BASE_URL = "https://voice-options.preview.emergentagent.com/api"
 
 class PersonaInterviewTester:
     def __init__(self):
