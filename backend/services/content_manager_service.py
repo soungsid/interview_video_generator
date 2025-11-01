@@ -285,7 +285,7 @@ Respond in JSON format:
             try:
                 title_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 36)
                 text_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 28)
-            except:
+            except Exception:
                 title_font = ImageFont.load_default()
                 text_font = ImageFont.load_default()
             
