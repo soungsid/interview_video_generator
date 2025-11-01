@@ -291,7 +291,7 @@ class VideoGenerationService:
         # Draw name
         try:
             font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 36)
-        except:
+        except Exception:
             font = ImageFont.load_default()
         
         # Calculate text position
