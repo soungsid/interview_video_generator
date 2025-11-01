@@ -366,3 +366,62 @@ agent_communication:
       3. Vérifier fluidité: intro -> welcome -> réponse candidat
       4. Tester en français et anglais
       5. Vérifier que dialogues ont bien question_number=0 pour l'intro
+
+
+  - agent: "main"
+    message: |
+      Phase 3 implémentée - Réorganisation API et nouvelles fonctionnalités:
+      
+      ✅ PHASE 1 - Réorganisation de l'API:
+      - Création de 4 fichiers de routing séparés:
+        * /api/health_routes.py - Healthchecks (/, /health, /health/database)
+        * /api/video_script_routes.py - Génération de scripts (/video-script au lieu de /videos/generate)
+        * /api/audio_routes.py - Génération audio (/audio/{video_id}/generate au lieu de /videos/{video_id}/generate-audio)
+        * /api/video_routes.py - Génération vidéo complète (/video/{video_id}/generate - NOUVEAU)
+      - Code de routing concentré dans les fichiers API
+      - Logique métier dans les services
+      - server.py mis à jour avec tous les nouveaux routers
+      - Version API: 2.0.0
+      
+      ✅ PHASE 2 - Amélioration génération audio:
+      - Service DialogueAnalyzerService créé (/services/dialogue_analyzer_service.py)
+      - Détection automatique de code dans les dialogues
+      - Analyse LLM pour traiter le code:
+        * Code simple (annotations) → lecture normale
+        * Code complexe (blocs, méthodes) → transformation en description naturelle
+      - Intégration dans audio_routes.py
+      - Stats ajoutées: "code_analyzed" pour tracer les dialogues traités
+      
+      ✅ PHASE 3 - Génération de vidéo:
+      - Librairies installées: moviepy, opencv-python, Pillow, matplotlib
+      - Service VideoGenerationService créé (/services/video_generation_service.py)
+      - Service ContentManagerService créé (/services/content_manager_service.py)
+      - Fonctionnalités vidéo:
+        * Background animé avec gradient changeant
+        * Section avatars (moitié supérieure) avec avatars YouTuber/Candidate
+        * Section contenu dynamique (moitié inférieure)
+        * Avatars s'agrandissent/diminuent selon qui parle
+      - Content Manager utilise LLM pour décider du contenu:
+        * "code" - Affiche code formaté avec fond sombre
+        * "diagram" - Génère diagrammes avec matplotlib
+        * "text" - Affiche points clés
+        * "image" - Placeholders pour futures images
+        * "none" - Pas de contenu
+      - Nouvelle API: POST /api/video/{video_id}/generate
+      - Nouvelle API: GET /api/video/{video_id}/file
+      - Video.video_url ajouté au modèle
+      
+      MODIFICATIONS DES URLS:
+      - ANCIEN: POST /api/videos/generate → NOUVEAU: POST /api/video-script
+      - ANCIEN: POST /api/videos/{id}/generate-audio → NOUVEAU: POST /api/audio/{id}/generate
+      - NOUVEAU: POST /api/video/{id}/generate (génération vidéo complète)
+      - NOUVEAU: GET /api/video/{id}/file (téléchargement vidéo)
+      
+      Backend redémarré avec succès. MongoDB configuré.
+      
+      Prêt pour tests backend (Phase 3):
+      1. Tester nouvelle structure API (health checks)
+      2. Tester génération script via /api/video-script
+      3. Tester analyse de dialogue avec code (dialogue_analyzer)
+      4. Tester génération audio via /api/audio/{id}/generate
+      5. Tester génération vidéo complète via /api/video/{id}/generate
